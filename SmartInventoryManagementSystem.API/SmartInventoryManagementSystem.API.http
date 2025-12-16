@@ -1,6 +1,14 @@
-@SmartInventoryManagementSystem.API_HostAddress = http://localhost:5172
+@url = http://localhost:5172
 
 GET {{SmartInventoryManagementSystem.API_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+GET {{url}}/api/product
+Accept: application/json
+
+###
+
+GET {{url}}/api/product/test-db
+Accept: application/json

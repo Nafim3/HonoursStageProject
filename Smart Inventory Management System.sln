@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36717.8 d17.14
+VisualStudioVersion = 17.14.36717.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartInventoryManagementSystem.API", "SmartInventoryManagementSystem.API\SmartInventoryManagementSystem.API.csproj", "{026161E1-E3D6-4407-AC8A-9EA922735C58}"
 EndProject
@@ -10,6 +10,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartInventoryManagementSystem.Domain", "SmartInventoryManagementSystem.Domain\SmartInventoryManagementSystem.Domain.csproj", "{DC627580-886E-4E4B-AF78-CB5D93B98AF6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartInventoryManagementSystem.Infrastructure", "SmartInventoryManagementSystem.Infrastructure\SmartInventoryManagementSystem.Infrastructure.csproj", "{7050D3F2-07D1-4F6D-A889-461197D86B39}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CF8719F8-EB0D-4466-AFFB-ECF42825570C} = {CF8719F8-EB0D-4466-AFFB-ECF42825570C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
