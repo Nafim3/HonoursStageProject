@@ -20,6 +20,11 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
 
         public IEnumerable<Product> GetProduct()
         {
+
+            if (_context.Products == null)
+            {
+                throw new InvalidOperationException("There's no product in the table");
+            }
             // Eager loading Category and Sales related data
             return _context.Products
                 .Include(p => p.Sales)
@@ -33,6 +38,29 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
             _context.SaveChanges();
         }
 
+        public Product? GetProductById(int id)
+        {
+            return _context.Products
+                .Include(p => p.Sales)
+                .AsNoTracking()
+                .FirstOrDefault(p => p.ProductId == id);
+        }
+
+        public void UpdateProduct(Product product)
+        {
+            _context.Products.Update(product);
+            _context.SaveChanges();
+        }
+
+        public void DeleteProduct(int id)
+        {
+            var product = _context.Products.Find(id);
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+                _context.SaveChanges();
+            }
+        }
 
     }
 }

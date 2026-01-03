@@ -1,4 +1,6 @@
-@url = http://localhost:5172
+@url = http://localhost:5172 
+
+// another one: https://localhost:7067
 
 GET {{SmartInventoryManagementSystem.API_HostAddress}}/weatherforecast/
 Accept: application/json
