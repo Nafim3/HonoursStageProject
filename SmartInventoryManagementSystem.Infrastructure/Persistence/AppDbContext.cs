@@ -15,7 +15,6 @@ namespace SmartInventoryManagementSystem.Infrastructure.Persistence
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Categories { get; set; }
         public DbSet<Sale> Sales { get; set; }
         public DbSet<User> Users { get; set; }
 
@@ -24,8 +23,8 @@ namespace SmartInventoryManagementSystem.Infrastructure.Persistence
         {
             modelBuilder.Entity<Sale>().ToTable("Sales");
             modelBuilder.Entity<Product>().ToTable("Products");
-            modelBuilder.Entity<Category>().ToTable("Categories");
             modelBuilder.Entity<User>().ToTable("Users");
+
 
             base.OnModelCreating(modelBuilder);
         }

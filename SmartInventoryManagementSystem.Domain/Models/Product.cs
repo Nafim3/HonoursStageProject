@@ -16,9 +16,6 @@ namespace SmartInventoryManagementSystem.Domain.Models
 
         public decimal ProductPrice { get; set; }
 
-        // FK to Category
-        public int CategoryId { get; set; }
-        public Category? Category { get; set; }
 
         // One-to-many: one product can appear in many sales
         public ICollection<Sale>? Sales { get; set; }

@@ -13,7 +13,7 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
 
         IEnumerable<Product> GetProduct();
         //Product GetProductById(int id);
-        //void AddProduct(Product product);
+        void AddProduct(Product product);
         //void UpdateProduct(Product product);
         //void DeleteProduct(int id);
 

@@ -20,11 +20,17 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
 
         public IEnumerable<Product> GetProduct()
         {
+            // Eager loading Category and Sales related data
             return _context.Products
-                .Include(p => p.Category)
                 .Include(p => p.Sales)
                 .AsNoTracking()
                 .ToList();
+        }
+
+        public void AddProduct(Product product)
+        {
+            _context.Products.Add(product);
+            _context.SaveChanges();
         }
 
 

@@ -10,8 +10,8 @@ namespace SmartInventoryManagementSystem.API.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        // Controller actions will be implemented here
-        private readonly IProductRepository _productRepository;
+        
+        private readonly IProductRepository _productRepository; // used to access product data
 
         public ProductController(IProductRepository productRepository)
         {
@@ -23,6 +23,17 @@ namespace SmartInventoryManagementSystem.API.Controllers
         {
             var products = _productRepository.GetProduct();
             return Ok(products);
+        }
+
+        [HttpPost("Addproducts")]
+        public IActionResult AddProduct([FromBody] Product product)
+        {
+            if (product == null)
+            {
+                return BadRequest("Product is null.");
+            }
+            _productRepository.AddProduct(product);
+            return CreatedAtAction(nameof(GetProducts), new { id = product.ProductId }, product);
         }
     }
 }
