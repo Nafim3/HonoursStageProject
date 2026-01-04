@@ -61,6 +61,13 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
                 _context.SaveChanges();
             }
         }
+        public IEnumerable<Product> GetLowStockProducts()
+        {
+            return _context.Products
+                .Where(p => p.QuantityInStock <= p.ReorderLevel)
+                .AsNoTracking()
+                .ToList();
+        }
 
     }
 }

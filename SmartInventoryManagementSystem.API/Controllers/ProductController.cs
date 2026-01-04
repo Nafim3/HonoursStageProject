@@ -12,10 +12,12 @@ namespace SmartInventoryManagementSystem.API.Controllers
     {
         
         private readonly IProductRepository _productRepository; // used to access product data
+        private readonly IProductService _productService; // used for product-related business logic
 
-        public ProductController(IProductRepository productRepository)
+        public ProductController(IProductRepository productRepository, IProductService productService)
         {
             _productRepository = productRepository;
+            _productService = productService;
         }
 
         [HttpGet]
@@ -75,6 +77,13 @@ namespace SmartInventoryManagementSystem.API.Controllers
             }
             _productRepository.DeleteProduct(id);
             return NoContent();
+        }
+
+        [HttpGet("Low-stock/check")]
+        public IActionResult CheckLowStock()
+        {
+            _productService.CheckLowStockAndNotify();
+            return Ok("Low stock check completed and notifications sent if necessary.");
         }
     }
 }

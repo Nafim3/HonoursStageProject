@@ -16,6 +16,8 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
         void AddProduct(Product product);
         void UpdateProduct(Product product);
         void DeleteProduct(int id);
+        IEnumerable<Product> GetLowStockProducts();
+
 
     }
 }
