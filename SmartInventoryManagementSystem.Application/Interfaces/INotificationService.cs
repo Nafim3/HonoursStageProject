@@ -9,7 +9,8 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
 {
     public interface INotificationService
     {
-        void NotifyLowStock(Product product);
+        Task NotifyLowStockAsync(Product product);
+        Task NotifyExpiredProductsAsync(Product product); 
 
     }
 }

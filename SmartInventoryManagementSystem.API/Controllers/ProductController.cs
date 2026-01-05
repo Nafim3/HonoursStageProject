@@ -21,16 +21,16 @@ namespace SmartInventoryManagementSystem.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetProducts()
+        public async Task <IActionResult> GetProducts()
         {
-            var products = _productRepository.GetProduct();
+            var products = await _productRepository.GetProductAsync();
             return Ok(products);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetProductById(int id)
+        public async Task<IActionResult> GetProductById(int id)
         {
-            var product = _productRepository.GetProductById(id);
+            var product = await _productRepository.GetProductByIdAsync(id);
             if (product == null)
             {
                 return NotFound($"Product with ID {id} not found.");
@@ -39,51 +39,58 @@ namespace SmartInventoryManagementSystem.API.Controllers
         }
 
         [HttpPost("Addproducts")]
-        public IActionResult AddProduct([FromBody] Product product)
+        public async Task<IActionResult> AddProduct([FromBody] Product product)
         {
             if (product == null)
             {
                 return BadRequest("Product is null");
             }
-            _productRepository.AddProduct(product);
+           await _productRepository.AddProductAsync(product);
             return CreatedAtAction(nameof(GetProducts), new { id = product.ProductId }, product);
         }
 
         [HttpPut("UpdateProducts/{id}")]
-        public IActionResult UpdateProduct(int id, [FromBody] Product product)
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product product)
         {
             if (product == null)
             {
                 return BadRequest("Product is null or ID mismatch");
             }
             
-            var existingProduct = _productRepository.GetProductById(id);
+            var existingProduct = await _productRepository.GetProductByIdAsync(id);
             if (existingProduct == null)
             {
                 return NotFound($"Product with ID {id} not found.");
             }
             product.ProductId = id;
-            _productRepository.UpdateProduct(product);
+           await _productRepository.UpdateProductAsync(product);
             return NoContent();
         }
 
         [HttpDelete("DeleteProducts/{id}")]
-        public IActionResult DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
-            var existingProduct = _productRepository.GetProductById(id);
+            var existingProduct = await _productRepository.GetProductByIdAsync(id);
             if (existingProduct == null)
             {
                 return NotFound($"Product with ID {id} not found.");
             }
-            _productRepository.DeleteProduct(id);
+            await _productRepository.DeleteProductAsync(id);
             return NoContent();
         }
 
         [HttpGet("Low-stock/check")]
-        public IActionResult CheckLowStock()
+        public async Task <IActionResult> CheckLowStock()
         {
-            _productService.CheckLowStockAndNotify();
+           await _productService.CheckLowStockAndNotifyAsync();
             return Ok("Low stock check completed and notifications sent if necessary.");
+        }
+
+        [HttpGet("Expired-products/check")]
+        public async Task <IActionResult> CheckExpiredProducts()
+        {
+           await _productService.CheckExpiredProductsAndNotifyAsync();
+            return Ok("Expired products check completed and notifications sent if necessary.");
         }
     }
 }

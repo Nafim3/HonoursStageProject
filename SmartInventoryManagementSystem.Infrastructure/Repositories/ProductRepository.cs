@@ -18,7 +18,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
             _context = context;
         }
 
-        public IEnumerable<Product> GetProduct()
+        public async Task <IEnumerable<Product>> GetProductAsync()
         {
 
             if (_context.Products == null)
@@ -26,47 +26,55 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
                 throw new InvalidOperationException("There's no product in the table");
             }
             // Eager loading Category and Sales related data
-            return _context.Products
+            return await _context.Products
                 .Include(p => p.Sales)
                 .AsNoTracking()
-                .ToList();
+                .ToListAsync();
         }
 
-        public void AddProduct(Product product)
+        public async Task AddProductAsync(Product product)
         {
-            _context.Products.Add(product);
-            _context.SaveChanges();
+           await _context.Products.AddAsync(product);
+           await _context.SaveChangesAsync();
         }
 
-        public Product? GetProductById(int id)
+        public async Task <Product?> GetProductByIdAsync(int id)
         {
-            return _context.Products
+            return await _context.Products
                 .Include(p => p.Sales)
                 .AsNoTracking()
-                .FirstOrDefault(p => p.ProductId == id);
+                .FirstOrDefaultAsync(p => p.ProductId == id);
         }
 
-        public void UpdateProduct(Product product)
+        public async Task UpdateProductAsync(Product product)
         {
-            _context.Products.Update(product);
-            _context.SaveChanges();
+           _context.Products.Update(product);
+           await _context.SaveChangesAsync();
         }
 
-        public void DeleteProduct(int id)
+        public async Task DeleteProductAsync(int id)
         {
-            var product = _context.Products.Find(id);
+            var product = await _context.Products.FindAsync(id);
             if (product != null)
             {
                 _context.Products.Remove(product);
-                _context.SaveChanges();
+               await _context.SaveChangesAsync();
             }
         }
-        public IEnumerable<Product> GetLowStockProducts()
+        public async Task <IEnumerable<Product>> GetLowStockProductsAsync()
         {
-            return _context.Products
+            return await _context.Products
                 .Where(p => p.QuantityInStock <= p.ReorderLevel)
                 .AsNoTracking()
-                .ToList();
+                .ToListAsync();
+        }
+        public async Task <IEnumerable<Product>> GetExpiredProductsAsync()
+        {
+            var currentDate = DateTime.UtcNow;
+            return await _context.Products
+                .Where(p => p.ExpiryDate <= currentDate)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
     }

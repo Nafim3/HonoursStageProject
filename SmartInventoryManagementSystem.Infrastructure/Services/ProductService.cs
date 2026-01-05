@@ -21,18 +21,33 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
             _notificationService = notificationService;
         }
 
-        public IEnumerable<Product> GetLowStockProducts()
+        public async Task <IEnumerable<Product>> GetLowStockProductsFromDBAsync()
         {
-            return _productRepository.GetLowStockProducts();
+            return await _productRepository.GetLowStockProductsAsync();
         }
 
-        public void CheckLowStockAndNotify()
+        public async Task CheckLowStockAndNotifyAsync()
         {
-            var lowStockProducts = _productRepository.GetLowStockProducts();
+            var lowStockProducts = await _productRepository.GetLowStockProductsAsync();
 
             foreach (var product in lowStockProducts)
             {
-                _notificationService.NotifyLowStock(product);
+               await _notificationService.NotifyLowStockAsync(product);
+            }
+        }
+
+        public async Task<IEnumerable<Product>> GetExpiredProductsFromDBAsync()
+        {
+            return await _productRepository.GetExpiredProductsAsync();
+        }
+
+
+        public async Task CheckExpiredProductsAndNotifyAsync()
+        {
+            var expiredProducts = await _productRepository.GetExpiredProductsAsync();
+            foreach (var product in expiredProducts)
+            {
+               await _notificationService.NotifyExpiredProductsAsync(product);
             }
         }
     }

@@ -11,12 +11,13 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
     {
         // Methods that describe what operations are allowed on Products
 
-        IEnumerable<Product> GetProduct();
-        Product? GetProductById(int id);
-        void AddProduct(Product product);
-        void UpdateProduct(Product product);
-        void DeleteProduct(int id);
-        IEnumerable<Product> GetLowStockProducts();
+        Task <IEnumerable<Product>> GetProductAsync();
+        Task <Product?> GetProductByIdAsync(int id);
+        Task AddProductAsync(Product product);
+        Task UpdateProductAsync(Product product);
+        Task DeleteProductAsync(int id);
+        Task <IEnumerable<Product>> GetLowStockProductsAsync();
+        Task <IEnumerable<Product>> GetExpiredProductsAsync();
 
 
     }

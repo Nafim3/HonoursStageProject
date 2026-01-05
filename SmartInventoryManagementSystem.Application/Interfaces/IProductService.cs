@@ -9,7 +9,9 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
 {
     public interface IProductService
     {
-        IEnumerable<Product> GetLowStockProducts();
-        void CheckLowStockAndNotify();
+        Task <IEnumerable<Product>> GetLowStockProductsFromDBAsync();
+        Task CheckLowStockAndNotifyAsync();
+        Task<IEnumerable<Product>> GetExpiredProductsFromDBAsync();
+        Task CheckExpiredProductsAndNotifyAsync();
     }
 }
