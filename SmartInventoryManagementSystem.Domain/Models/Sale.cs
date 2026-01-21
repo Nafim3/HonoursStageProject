@@ -9,7 +9,6 @@ namespace SmartInventoryManagementSystem.Domain.Models
     public class Sale
     {
         public int SaleId { get; set; }
-
         public decimal TotalAmount { get; set; }
         public DateTime SaleDate { get; set; }
 
@@ -18,5 +17,6 @@ namespace SmartInventoryManagementSystem.Domain.Models
 
         // Navigation properties
         public User? User { get; set; }
+        public ICollection<SaleItem> SaleItems { get; set; } = new List<SaleItem>();
     }
 }

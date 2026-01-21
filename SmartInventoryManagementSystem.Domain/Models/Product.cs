@@ -17,6 +17,6 @@ namespace SmartInventoryManagementSystem.Domain.Models
 
 
         // One-to-many: one product can appear in many sales
-        public ICollection<Sale>? Sales { get; set; }
+        public ICollection<SaleItem>? SaleItems { get; set; }
     }
 }

@@ -27,7 +27,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
             }
             // Eager loading Category and Sales related data
             return await _context.Products
-                .Include(p => p.Sales)
+                //.Include(p => p.Sales)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -41,7 +41,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
         public async Task <Product?> GetProductByIdAsync(int id)
         {
             return await _context.Products
-                .Include(p => p.Sales)
+                //.Include(p => p.Sales)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.ProductId == id);
         }
