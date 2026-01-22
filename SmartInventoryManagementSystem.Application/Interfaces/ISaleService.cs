@@ -9,6 +9,6 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
 {
     public interface ISaleService
     {
-        int CreateSale(CreateSaleRequest request);
+        CreateSaleResponse CreateSale(CreateSaleRequest request);
     }
 }

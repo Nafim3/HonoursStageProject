@@ -19,63 +19,101 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
             _context = context;
         }
 
-        public int CreateSale(CreateSaleRequest request)
+        public CreateSaleResponse CreateSale(CreateSaleRequest request)
         {
-            if (request.Items == null || !request.Items.Any())
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
             {
-                throw new ArgumentException("Sale must contain at least one item.");
-            }
-            var sale = new Sale
-            {
-                UserId = request.UserId,
-                SaleDate = DateTime.UtcNow,
-                TotalAmount = 0
-            }; 
-            _context.Sales.Add(sale);
-            _context.SaveChanges();
+                // check for empty sale
+                if (request.Items == null || !request.Items.Any())
+                {
+                    throw new ArgumentException("Sale must contain at least one item.");
+                }
 
-            var saleItems = new List<SaleItem>();
+                // Duplicate product check
+                var duplicateProduct = request.Items
+                    .GroupBy(i => i.ProductId)
+                    .FirstOrDefault(g => g.Count() > 1);
 
-            foreach (var item in request.Items)
-            {
-                // THIS is where you fetch the product
-                var product = _context.Products
-                    .FirstOrDefault(p => p.ProductId == item.ProductId);
+                if (duplicateProduct != null)
+                {
+                    throw new ArgumentException(
+                        $"Product {duplicateProduct.Key} appears multiple times in the sale.");
+                }
 
-                // Then you validate it
-                if (product == null)
-                    throw new Exception($"Product with ID {item.ProductId} not found.");
+                // User existence check
+                var userExists = _context.Users.Any(u => u.UserId == request.UserId);
+                if (!userExists)
+                    throw new Exception("Invalid user.");
 
-                // Then you check stock
-                if (product.QuantityInStock < item.Quantity)
-                    throw new Exception($"Not enough stock for product {product.ProductName}.");
+                var sale = new Sale
+                {
+                    UserId = request.UserId,
+                    SaleDate = DateTime.UtcNow,
+                    TotalAmount = 0
+                };
+                _context.Sales.Add(sale);
+                _context.SaveChanges();
 
-                // Then calculate totals
-                var lineTotal = product.ProductPrice * item.Quantity;
+                var saleItems = new List<SaleItem>();
 
-                // Then create the SaleItem
-                var saleItem = new SaleItem
+                foreach (var item in request.Items)
+                {
+                    // First validate quantity
+                    if (item.Quantity <= 0)
+                        throw new ArgumentException("Quantity must be greater than zero.");
+
+                    // THIS is where the product is fetched
+                    var product = _context.Products
+                        .FirstOrDefault(p => p.ProductId == item.ProductId);
+
+                    // Then its validated
+                    if (product == null)
+                        throw new Exception($"Product with ID {item.ProductId} not found.");
+
+                    // Then stock is checked
+                    if (product.QuantityInStock < item.Quantity)
+                        throw new Exception($"Not enough stock for product {product.ProductName}.");
+
+                    // Then calculate totals
+                    var lineTotal = product.ProductPrice * item.Quantity;
+
+                    // Then create the SaleItem
+                    var saleItem = new SaleItem
+                    {
+                        SaleId = sale.SaleId,
+                        ProductId = product.ProductId,
+                        Quantity = item.Quantity,
+                        UnitPrice = product.ProductPrice,
+                        LineTotal = lineTotal
+                    };
+
+                    saleItems.Add(saleItem);
+
+
+                    // Then update stock
+                    product.QuantityInStock -= item.Quantity;
+                }
+                _context.SaleItems.AddRange(saleItems);
+
+                sale.TotalAmount = saleItems.Sum(si => si.LineTotal);
+
+                _context.SaveChanges();
+                transaction.Commit();
+
+                return new CreateSaleResponse
                 {
                     SaleId = sale.SaleId,
-                    ProductId = product.ProductId,
-                    Quantity = item.Quantity,
-                    UnitPrice = product.ProductPrice,
-                    LineTotal = lineTotal
+                    TotalAmount = sale.TotalAmount,
+                    ItemCount = saleItems.Count
                 };
-
-                saleItems.Add(saleItem);
-                
-
-                // Then update stock
-                product.QuantityInStock -= item.Quantity;
             }
-            _context.SaleItems.AddRange(saleItems);
-
-            sale.TotalAmount = saleItems.Sum(si => si.LineTotal);
-
-            _context.SaveChanges();
-
-            return sale.SaleId;
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SmartInventoryManagementSystem.Application.DTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
+using SmartInventoryManagementSystem.Domain.Models;
 
 namespace SmartInventoryManagementSystem.API.Controllers
 {
@@ -21,8 +22,8 @@ namespace SmartInventoryManagementSystem.API.Controllers
         {
             try 
             {
-                var saleId = _saleService.CreateSale(request);
-                return Ok(new { SaleId = saleId });
+                var result = _saleService.CreateSale(request);
+                return Ok(result);
             }
             catch (Exception exception)
             {
