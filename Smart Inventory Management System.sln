@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartInventoryManagementSys
 		{CF8719F8-EB0D-4466-AFFB-ECF42825570C} = {CF8719F8-EB0D-4466-AFFB-ECF42825570C}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartInventoryManagementSystem.Client", "SmartInventoryManagementSystem.Client\SmartInventoryManagementSystem.Client.csproj", "{30069AB1-4FA5-4FCB-AD07-62D818E7A4B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{7050D3F2-07D1-4F6D-A889-461197D86B39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7050D3F2-07D1-4F6D-A889-461197D86B39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7050D3F2-07D1-4F6D-A889-461197D86B39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30069AB1-4FA5-4FCB-AD07-62D818E7A4B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30069AB1-4FA5-4FCB-AD07-62D818E7A4B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30069AB1-4FA5-4FCB-AD07-62D818E7A4B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30069AB1-4FA5-4FCB-AD07-62D818E7A4B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

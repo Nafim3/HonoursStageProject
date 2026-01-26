@@ -1,0 +1,48 @@
+﻿@using SmartInventoryManagementSystem.Application.DTO
+@using System.Net.Http.Json
+
+@page "/sales"
+@inject HttpClient Http
+
+<h3>Sales</h3>
+
+@if (sales == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Sale ID</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sale in sales)
+            {
+                <tr>
+                    <td>@sale.SaleId</td>
+                    <td>@sale.SaleDate.ToShortDateString()</td>
+                    <td>@sale.TotalAmount</td>
+                    <td>
+                        <a href="/sales/@sale.SaleId">View</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code 
+{
+    List<GetAllSales>? sales;
+
+    protected override async Task OnInitializedAsync()
+    {
+        sales = await Http.GetFromJsonAsync<List<GetAllSales>>("api/sales/GetAllSales");
+    }
+}
