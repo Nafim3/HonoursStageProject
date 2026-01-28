@@ -9,6 +9,6 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
 {
     public interface ISaleService
     {
-        CreateSaleResponse CreateSale(CreateSaleRequest request);
+        Task<CreateSaleResponse> CreateSaleAsync(CreateSaleRequest request);
     }
 }

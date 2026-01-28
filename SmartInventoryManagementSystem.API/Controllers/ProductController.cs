@@ -92,5 +92,6 @@ namespace SmartInventoryManagementSystem.API.Controllers
            await _productService.CheckExpiredProductsAndNotifyAsync();
             return Ok("Expired products check completed and notifications sent if necessary.");
         }
+
     }
 }

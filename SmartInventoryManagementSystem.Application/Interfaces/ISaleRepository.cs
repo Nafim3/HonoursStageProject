@@ -9,7 +9,7 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
 {
     public interface ISaleRepository
     {
-        IEnumerable<GetAllSales> FetchAllSales();
-        GetByID? FetchSaleById(int saleId);
+       Task <List<GetAllSales>> FetchAllSalesAsync();
+       Task <GetByID?> FetchSaleByIdAsync(int saleId);
     }
 }

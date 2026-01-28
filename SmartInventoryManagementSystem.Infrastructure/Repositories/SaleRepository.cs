@@ -19,9 +19,9 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
             _context = context;
         }
 
-        public IEnumerable <GetAllSales> FetchAllSales()
+        public async Task <List <GetAllSales>> FetchAllSalesAsync()
         {
-            return _context.Sales
+            return await _context.Sales
                         .Select (sale=> new GetAllSales
                         {
                             SaleId = sale.SaleId,
@@ -30,12 +30,12 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
                             TotalAmount = sale.TotalAmount
                         })
                         .AsNoTracking()
-                        .ToList();
+                        .ToListAsync();
         }
 
-        public GetByID? FetchSaleById(int saleId)
+        public async Task <GetByID?> FetchSaleByIdAsync(int saleId)
         {
-            return _context.Sales
+            return await _context.Sales
                         .Where(sale => sale.SaleId == saleId)
                         .Select(sale => new GetByID
                         {
@@ -54,7 +54,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
                                         .ToList()
                         })
                         .AsNoTracking()
-                        .FirstOrDefault();
+                        .FirstOrDefaultAsync();
         }
     }
 }

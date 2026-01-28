@@ -18,7 +18,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task <IEnumerable<Product>> GetProductAsync()
+        public async Task <List<Product>> GetProductAsync()
         {
 
             if (_context.Products == null)
@@ -61,7 +61,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
                await _context.SaveChangesAsync();
             }
         }
-        public async Task <IEnumerable<Product>> GetLowStockProductsAsync()
+        public async Task <List<Product>> GetLowStockProductsAsync()
         {
             return await _context.Products
                 .Where(p => p.QuantityInStock <= p.ReorderLevel)

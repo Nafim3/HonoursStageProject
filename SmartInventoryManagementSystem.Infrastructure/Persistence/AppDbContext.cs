@@ -18,6 +18,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Persistence
         public DbSet<Sale> Sales { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<SaleItem> SaleItems { get; set; }
+        public DbSet <Alert> Alerts { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,6 +27,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Persistence
             modelBuilder.Entity<Product>().ToTable("Products");
             modelBuilder.Entity<User>().ToTable("Users");
             modelBuilder.Entity<SaleItem>().ToTable("SaleItems");
+            modelBuilder.Entity<Alert>().ToTable("Alerts");
 
 
             base.OnModelCreating(modelBuilder);

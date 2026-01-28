@@ -10,15 +10,74 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
 {
     public class NotificationService : INotificationService
     {
-        public Task NotifyLowStockAsync(Product product)
+
+        private readonly IAlertRepository _alertRepository;
+
+        public NotificationService(IAlertRepository alertRepository)
         {
-            Console.WriteLine($"LOW STOCK ALERT: {product.ProductName}, Quantity: {product.QuantityInStock}");
-            return Task.CompletedTask;
+            _alertRepository = alertRepository;
         }
-        public Task NotifyExpiredProductsAsync(Product product)
+
+        public async Task NotifyLowStockAsync(Product product)
         {
-            Console.WriteLine($"EXPIRED PRODUCT ALERT: {product.ProductName}, Expiry Date: {product.ExpiryDate}");
-            return Task.CompletedTask;
+           
+
+            var alert = new Alert
+            {
+                Category = "LowStock",
+                Message = $"{product.ProductName} is low in stock (Qty: {product.QuantityInStock})",
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _alertRepository.AddAsync(alert);
+        }
+
+        public async Task NotifyExpiredProductsAsync(Product product)
+        {
+          
+
+            var alert = new Alert
+            {
+                Category = "Expired",
+                Message = $"{product.ProductName} expired on {product.ExpiryDate:d}",
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _alertRepository.AddAsync(alert);
         }
     }
 }
+
+/*
+ public class NotificationService : INotificationService
+{
+    private readonly AppDbContext _context;
+
+    public NotificationService(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task NotifyLowStockAsync(Product product)
+    {
+        _context.Notifications.Add(new Notification
+        {
+            Category = "LowStock",
+            Message = $"LOW STOCK: {product.ProductName} (Qty: {product.QuantityInStock})"
+        });
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task NotifyExpiredProductsAsync(Product product)
+    {
+        _context.Notifications.Add(new Notification
+        {
+            Category = "Expired",
+            Message = $"EXPIRED: {product.ProductName} (Expired on {product.ExpiryDate:d})"
+        });
+
+        await _context.SaveChangesAsync();
+    }
+}
+ */ 

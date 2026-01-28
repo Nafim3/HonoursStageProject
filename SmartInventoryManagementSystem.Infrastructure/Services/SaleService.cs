@@ -1,12 +1,13 @@
-﻿using SmartInventoryManagementSystem.Infrastructure.Persistence;
+﻿using Microsoft.EntityFrameworkCore;
 using SmartInventoryManagementSystem.Application.DTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
+using SmartInventoryManagementSystem.Domain.Models;
+using SmartInventoryManagementSystem.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SmartInventoryManagementSystem.Domain.Models;
 
 namespace SmartInventoryManagementSystem.Infrastructure.Services
 {
@@ -19,17 +20,15 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
             _context = context;
         }
 
-        public CreateSaleResponse CreateSale(CreateSaleRequest request)
+        public async Task<CreateSaleResponse> CreateSaleAsync(CreateSaleRequest request)
         {
-            using var transaction = _context.Database.BeginTransaction();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                // check for empty sale
+                // Empty sale check
                 if (request.Items == null || !request.Items.Any())
-                {
                     throw new ArgumentException("Sale must contain at least one item.");
-                }
 
                 // Duplicate product check
                 var duplicateProduct = request.Items
@@ -37,49 +36,45 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                     .FirstOrDefault(g => g.Count() > 1);
 
                 if (duplicateProduct != null)
-                {
-                    throw new ArgumentException(
-                        $"Product {duplicateProduct.Key} appears multiple times in the sale.");
-                }
+                    throw new ArgumentException($"Product {duplicateProduct.Key} appears multiple times in the sale.");
 
                 // User existence check
-                var userExists = _context.Users.Any(u => u.UserId == request.UserId);
+                var userExists = await _context.Users
+                    .AnyAsync(u => u.UserId == request.UserId);
+
                 if (!userExists)
                     throw new Exception("Invalid user.");
 
+                // Create sale
                 var sale = new Sale
                 {
                     UserId = request.UserId,
                     SaleDate = DateTime.UtcNow,
                     TotalAmount = 0
                 };
-                _context.Sales.Add(sale);
-                _context.SaveChanges();
+
+                await _context.Sales.AddAsync(sale);
+                await _context.SaveChangesAsync();
 
                 var saleItems = new List<SaleItem>();
 
                 foreach (var item in request.Items)
                 {
-                    // First validate quantity
                     if (item.Quantity <= 0)
                         throw new ArgumentException("Quantity must be greater than zero.");
 
-                    // THIS is where the product is fetched
-                    var product = _context.Products
-                        .FirstOrDefault(p => p.ProductId == item.ProductId);
+                    // Fetch product async
+                    var product = await _context.Products
+                        .FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
 
-                    // Then its validated
                     if (product == null)
                         throw new Exception($"Product with ID {item.ProductId} not found.");
 
-                    // Then stock is checked
                     if (product.QuantityInStock < item.Quantity)
                         throw new Exception($"Not enough stock for product {product.ProductName}.");
 
-                    // Then calculate totals
                     var lineTotal = product.ProductPrice * item.Quantity;
 
-                    // Then create the SaleItem
                     var saleItem = new SaleItem
                     {
                         SaleId = sale.SaleId,
@@ -91,16 +86,16 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
 
                     saleItems.Add(saleItem);
 
-
-                    // Then update stock
+                    // Update stock
                     product.QuantityInStock -= item.Quantity;
                 }
-                _context.SaleItems.AddRange(saleItems);
+
+                await _context.SaleItems.AddRangeAsync(saleItems);
 
                 sale.TotalAmount = saleItems.Sum(si => si.LineTotal);
 
-                _context.SaveChanges();
-                transaction.Commit();
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
                 return new CreateSaleResponse
                 {
@@ -111,9 +106,10 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
             }
             catch
             {
-                transaction.Rollback();
+                await transaction.RollbackAsync();
                 throw;
             }
         }
+
     }
 }

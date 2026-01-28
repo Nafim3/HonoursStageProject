@@ -18,11 +18,11 @@ namespace SmartInventoryManagementSystem.API.Controllers
         }
 
         [HttpPost("CreateSale")]
-        public IActionResult Create (CreateSaleRequest request)
+        public async Task <IActionResult> Create (CreateSaleRequest request)
         {
             try 
             {
-                var result = _saleService.CreateSale(request);
+                var result = await _saleService.CreateSaleAsync(request);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -32,16 +32,21 @@ namespace SmartInventoryManagementSystem.API.Controllers
         }
 
         [HttpGet("GetAllSales")]
-        public IActionResult GetAllSales([FromServices] ISaleRepository saleRepository)
+        public async Task <IActionResult> GetAllSales([FromServices] ISaleRepository saleRepository)
         {
-            var sales = saleRepository.FetchAllSales();
+            if (saleRepository == null)
+            {
+                return BadRequest(new { MSG = "Sale repository is not available." });
+            }
+
+            var sales = await saleRepository.FetchAllSalesAsync();
             return Ok(sales);
         }
 
         [HttpGet("GetSale/{saleId}")]
-        public IActionResult GetSaleById(int saleId, [FromServices] ISaleRepository saleRepository)
+        public async Task <IActionResult> GetSaleById(int saleId, [FromServices] ISaleRepository saleRepository)
         {
-            var sale = saleRepository.FetchSaleById(saleId);
+            var sale = await saleRepository.FetchSaleByIdAsync(saleId);
             if (sale == null)
             {
                 return NotFound(new { MSG = $"Sale with ID {saleId} not found." });
