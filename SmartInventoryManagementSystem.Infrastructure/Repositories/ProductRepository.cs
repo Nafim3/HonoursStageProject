@@ -68,7 +68,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
-        public async Task <IEnumerable<Product>> GetExpiredProductsAsync()
+        public async Task <List<Product>> GetExpiredProductsAsync()
         {
             var currentDate = DateTime.UtcNow;
             return await _context.Products

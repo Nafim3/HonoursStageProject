@@ -11,5 +11,6 @@ namespace SmartInventoryManagementSystem.Application.DTO
         public int TotalProducts { get; set; }
         public int SalesToday { get; set; }
         public int LowStockCount { get; set; }
+        public int ExpiredProductsCount { get; set; }   
     }
 }

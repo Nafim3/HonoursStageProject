@@ -31,11 +31,14 @@ namespace SmartInventoryManagementSystem.API.Controllers
 
             var lowStockCount = (await _productRepo.GetLowStockProductsAsync()).Count;
 
+            var expiredProducts = (await _productRepo.GetExpiredProductsAsync()).Count;
+
             var dto = new Dashboard
             {
                 TotalProducts = totalProducts,
                 SalesToday = salesToday,
-                LowStockCount = lowStockCount
+                LowStockCount = lowStockCount,
+                ExpiredProductsCount = expiredProducts
             };
 
             return Ok(dto);

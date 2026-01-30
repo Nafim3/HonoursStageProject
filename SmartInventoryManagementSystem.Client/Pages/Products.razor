@@ -1,0 +1,92 @@
+﻿@page "/products"
+@inject HttpClient Http
+@inject IJSRuntime JS
+@using SmartInventoryManagementSystem.Application.DTO
+
+<div class="container mt-5">
+
+    <!-- Header + Add Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-info fw-bold">Products</h3>
+
+        <a class="btn btn-outline-info fw-bold" href="/products/add">
+             Add Product
+        </a>
+    </div>
+
+    <!-- Loading -->
+    @if (products == null)
+    {
+        <div class="alert alert-secondary text-center">
+            Loading products...
+        </div>
+    }
+    else if (!products.Any())
+    {
+        <div class="alert alert-info text-center">
+            No products found.
+        </div>
+    }
+    else
+    {
+        <!-- Table Card -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped table-hover align-middle">
+                        <thead class="table-info text-dark">
+                            <tr>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Reorder Level</th>
+                                <th style="width: 160px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in products)
+                            {
+                                <tr>
+                                    <td>@p.Name</td>
+                                    <td>@p.Price</td>
+                                    <td>@p.Quantity</td>
+                                    <td>@p.ReorderLevel</td>
+                                    <td>
+                                        <a class="btn btn-sm btn-info me-2" href="/products/edit/@p.ProductId">
+                                            Edit
+                                        </a>
+
+                                        <button class="btn btn-sm btn-danger"
+                                                @onclick="() => ConfirmDelete(p.ProductId, p.Name ?? string.Empty)">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    List<ProductListDto>? products;
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = await Http.GetFromJsonAsync<List<ProductListDto>>("api/product");
+    }
+
+    async Task ConfirmDelete(int id, string name)
+    {
+        if (await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete {name}?"))
+        {
+            await Http.DeleteAsync($"api/product/{id}");
+            products = await Http.GetFromJsonAsync<List<ProductListDto>>("api/product");
+        }
+    }
+}

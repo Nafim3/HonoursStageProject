@@ -3,51 +3,74 @@
 @using SmartInventoryManagementSystem.Application.DTO
 @inject HttpClient Http
 
-<h2 class="text-center mb-4">Smart Inventory Management System</h2>
+<div class="container mt-4">
 
-@if (dashboard == null)
-{
-    <p class="text-center">Loading dashboard...</p>
-}
-else
-{
-    <div class="row g-4">
+    <h2 class="text-center mb-4 text-info fw-bold">
+        Smart Inventory Management System
+    </h2>
 
-        <div class="col-md-4">
-            <div class="card text-center p-4 shadow-sm">
-                <h6>Total Products</h6>
-                <h2 class="fw-bold text-info">@dashboard.TotalProducts</h2>
+    @if (dashboard == null)
+    {
+        <p class="text-center text-muted">Loading dashboard...</p>
+    }
+    else
+    {
+        <!-- KPI Cards -->
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="card bg-dark text-center p-4 shadow border-info border-1">
+                    <h6 class="text-uppercase text-muted">Total Products</h6>
+                    <h2 class="fw-bold text-info display-6">@dashboard.TotalProducts</h2>
+                </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card text-center p-4 shadow-sm">
-                <h6>Sales Today</h6>
-                <h2 class="fw-bold text-success">@dashboard.SalesToday</h2>
+            <div class="col-md-4">
+                <div class="card bg-dark text-center p-4 shadow border-success border-1">
+                    <h6 class="text-uppercase text-muted">Sales Today</h6>
+                    <h2 class="fw-bold text-success display-6">@dashboard.SalesToday</h2>
+                </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card text-center p-4 shadow-sm">
-                <h6>Low Stock Items</h6>
-                <h2 class="fw-bold text-danger">@dashboard.LowStockCount</h2>
+            <div class="col-md-4">
+                <div class="card bg-dark text-center p-4 shadow border-danger border-1">
+                    <h6 class="text-uppercase text-muted">Low Stock Items</h6>
+                    <h2 class="fw-bold text-danger display-6">@dashboard.LowStockCount</h2>
+                </div>
             </div>
+
+            <div class="col-md-4">
+                <div class="card bg-dark text-center p-4 shadow border-danger border-1">
+                    <h6 class="text-uppercase text-muted">Expired Products</h6>
+                    <h2 class="fw-bold text-danger display-6">@dashboard.ExpiredProductsCount</h2>
+                </div>
+            </div>
+
+
         </div>
 
-    </div>
+        <hr class="my-5 border-secondary" />
 
-    <hr class="my-4" />
+        <!-- Quick Actions -->
+        <h4 class="text-info mb-3">Quick Actions</h4>
 
-    <div class="row g-3">
-        <div class="col-md-3">
-            <a class="btn btn-primary w-100 py-3" href="/products">Manage Products</a>
+        <div class="row g-3">
+
+            <div class="col-md-3">
+                <a class="btn btn-outline-info w-100 py-3 fw-bold" href="/products">
+                    Manage Products
+                </a>
+            </div>
+
+            <div class="col-md-3">
+                <a class="btn btn-outline-success w-100 py-3 fw-bold" href="/sales">
+                    View Sales
+                </a>
+            </div>
+
         </div>
-
-        <div class="col-md-3">
-            <a class="btn btn-primary w-100 py-3" href="/sales">View Sales</a>
-        </div>
-    </div>
-}
+    }
+</div>
 
 @code 
 {

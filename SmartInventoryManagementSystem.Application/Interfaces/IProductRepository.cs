@@ -17,7 +17,7 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
         Task UpdateProductAsync(Product product);
         Task DeleteProductAsync(int id);
         Task <List<Product>> GetLowStockProductsAsync();
-        Task <IEnumerable<Product>> GetExpiredProductsAsync();
+        Task <List<Product>> GetExpiredProductsAsync();
 
 
     }

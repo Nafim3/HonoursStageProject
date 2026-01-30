@@ -47,37 +47,3 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
         }
     }
 }
-
-/*
- public class NotificationService : INotificationService
-{
-    private readonly AppDbContext _context;
-
-    public NotificationService(AppDbContext context)
-    {
-        _context = context;
-    }
-
-    public async Task NotifyLowStockAsync(Product product)
-    {
-        _context.Notifications.Add(new Notification
-        {
-            Category = "LowStock",
-            Message = $"LOW STOCK: {product.ProductName} (Qty: {product.QuantityInStock})"
-        });
-
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task NotifyExpiredProductsAsync(Product product)
-    {
-        _context.Notifications.Add(new Notification
-        {
-            Category = "Expired",
-            Message = $"EXPIRED: {product.ProductName} (Expired on {product.ExpiryDate:d})"
-        });
-
-        await _context.SaveChangesAsync();
-    }
-}
- */ 

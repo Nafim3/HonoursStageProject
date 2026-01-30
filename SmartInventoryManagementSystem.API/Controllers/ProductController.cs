@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SmartInventoryManagementSystem.Application.DTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 using SmartInventoryManagementSystem.Domain.Models;
 using SmartInventoryManagementSystem.Infrastructure.Persistence;
@@ -24,7 +25,17 @@ namespace SmartInventoryManagementSystem.API.Controllers
         public async Task <IActionResult> GetProducts()
         {
             var products = await _productRepository.GetProductAsync();
-            return Ok(products);
+
+            var dto = products.Select(p => new ProductListDto
+            {
+                ProductId = p.ProductId,
+                Name = p.ProductName,
+                Quantity = p.QuantityInStock,
+                ReorderLevel = p.ReorderLevel,
+                Price = p.ProductPrice
+            });
+
+            return Ok(dto);
         }
 
         [HttpGet("{id}")]
@@ -39,14 +50,20 @@ namespace SmartInventoryManagementSystem.API.Controllers
         }
 
         [HttpPost("Addproducts")]
-        public async Task<IActionResult> AddProduct([FromBody] Product product)
+        public async Task<IActionResult> AddProduct([FromBody] CreateProductRequest dto)
         {
-            if (product == null)
+            var product = new Product
             {
-                return BadRequest("Product is null");
-            }
-           await _productRepository.AddProductAsync(product);
-            return CreatedAtAction(nameof(GetProducts), new { id = product.ProductId }, product);
+                ProductName = dto.Name,
+                QuantityInStock = dto.Quantity,
+                ReorderLevel = dto.ReorderLevel,
+                ProductPrice = dto.Price,
+                ExpiryDate = dto.ExpiryDate
+            };
+
+            await _productRepository.AddProductAsync(product);
+
+            return Ok();
         }
 
         [HttpPut("UpdateProducts/{id}")]
