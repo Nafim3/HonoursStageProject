@@ -12,7 +12,7 @@ namespace SmartInventoryManagementSystem.Domain.Models
         public string? ProductName { get; set; }
         public int QuantityInStock { get; set; }
         public int ReorderLevel { get; set; }
-        public DateTime ExpiryDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
         public decimal ProductPrice { get; set; }
 
 

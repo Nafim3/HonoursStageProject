@@ -1,0 +1,142 @@
+﻿@page "/products/edit/{id:int}"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using SmartInventoryManagementSystem.Application.DTO
+@using Microsoft.AspNetCore.Components
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-info fw-bold">Edit Product</h3>
+
+        <button type="button" class="btn btn-outline-secondary" @onclick="GoBack">
+            Back
+        </button>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="alert alert-secondary">Loading product...</div>
+    }
+    else if (loadFailed)
+    {
+        <div class="alert alert-danger">
+            Failed to load product. Please try again.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <EditForm Model="product" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Name</label>
+                            <InputText class="form-control" @bind-Value="product.Name" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Quantity</label>
+                            <InputNumber class="form-control" @bind-Value="product.Quantity" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Reorder Level</label>
+                            <InputNumber class="form-control" @bind-Value="product.ReorderLevel" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Price</label>
+                            <InputNumber class="form-control" @bind-Value="product.Price" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Expiry Date</label>
+                            <InputDate class="form-control" @bind-Value="product.ExpiryDate" />
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger">
+                            @errorMessage
+                        </div>
+                    }
+
+                    <button class="btn btn-success px-4" type="submit">
+                        Save
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-secondary ms-2"
+                            @onclick="GoBack">
+                        Cancel
+                    </button>
+
+                </EditForm>
+
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private UpdateProductRequest product = new();
+    private bool isLoading = true;
+    private bool loadFailed = false;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await Http.GetFromJsonAsync<UpdateProductRequest>($"api/product/{id}");
+            if (result is null)
+            {
+                loadFailed = true;
+            }
+            else
+            {
+                product = result;
+            }
+        }
+        catch
+        {
+            loadFailed = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        errorMessage = null;
+
+        var response = await Http.PutAsJsonAsync(
+            $"api/product/UpdateProduct/{id}",
+            product);
+
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/products");
+            return;
+        }
+        var apiMessage = await response.Content.ReadAsStringAsync(); errorMessage = string.IsNullOrWhiteSpace(apiMessage) 
+        ? "Failed to save changes. Try again."
+        : apiMessage;
+
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/products");
+    }
+}

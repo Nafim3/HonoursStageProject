@@ -85,7 +85,7 @@
     {
         if (await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete {name}?"))
         {
-            await Http.DeleteAsync($"api/product/{id}");
+            await Http.DeleteAsync($"api/product/DeleteProduct/{id}");
             products = await Http.GetFromJsonAsync<List<ProductListDto>>("api/product");
         }
     }

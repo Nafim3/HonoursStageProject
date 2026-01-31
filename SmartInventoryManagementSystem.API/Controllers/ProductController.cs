@@ -66,12 +66,12 @@ namespace SmartInventoryManagementSystem.API.Controllers
             return Ok();
         }
 
-        [HttpPut("UpdateProducts/{id}")]
-        public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product product)
+        [HttpPut("UpdateProduct/{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] UpdateProductRequest dto)
         {
-            if (product == null)
+            if (dto == null)
             {
-                return BadRequest("Product is null or ID mismatch");
+                return BadRequest("Request body is null");
             }
             
             var existingProduct = await _productRepository.GetProductByIdAsync(id);
@@ -79,12 +79,23 @@ namespace SmartInventoryManagementSystem.API.Controllers
             {
                 return NotFound($"Product with ID {id} not found.");
             }
-            product.ProductId = id;
-           await _productRepository.UpdateProductAsync(product);
+
+            // ---- server-side expiry check ----
+            if (dto.ExpiryDate.HasValue && dto.ExpiryDate.Value.Date < DateTime.Today)
+                return BadRequest("Expiry date cannot be in the past.");
+
+            existingProduct.ProductName = dto.Name;
+            existingProduct.QuantityInStock = dto.Quantity;
+            existingProduct.ReorderLevel = dto.ReorderLevel;
+            existingProduct.ProductPrice = dto.Price;
+            existingProduct.ExpiryDate = dto.ExpiryDate;
+
+
+            await _productRepository.UpdateProductAsync(existingProduct);
             return NoContent();
         }
 
-        [HttpDelete("DeleteProducts/{id}")]
+        [HttpDelete("DeleteProduct/{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var existingProduct = await _productRepository.GetProductByIdAsync(id);
