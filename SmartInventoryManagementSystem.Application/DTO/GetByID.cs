@@ -12,5 +12,7 @@ namespace SmartInventoryManagementSystem.Application.DTO
         public decimal TotalAmount { get; set; }
         public DateTime SaleDate { get; set; }
         public List<SaleDetails> Items { get; set; } = new();
+        public string BuyerName { get; set; } = "";
+
     }
 }

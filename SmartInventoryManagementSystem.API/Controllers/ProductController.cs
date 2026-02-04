@@ -14,11 +14,12 @@ namespace SmartInventoryManagementSystem.API.Controllers
         
         private readonly IProductRepository _productRepository; // used to access product data
         private readonly IProductService _productService; // used for product-related business logic
-
-        public ProductController(IProductRepository productRepository, IProductService productService)
+        private readonly ICurrentUserService _currentUser;
+        public ProductController(IProductRepository productRepository, IProductService productService, ICurrentUserService currentUser)
         {
             _productRepository = productRepository;
             _productService = productService;
+            _currentUser = currentUser;
         }
 
         [HttpGet]
@@ -42,10 +43,8 @@ namespace SmartInventoryManagementSystem.API.Controllers
         public async Task<IActionResult> GetProductById(int id)
         {
             var product = await _productRepository.GetProductByIdAsync(id);
-            if (product == null)
-            {
+            if (product == null || product.UserId != _currentUser.UserId)
                 return NotFound($"Product with ID {id} not found.");
-            }
             return Ok(product);
         }
 
@@ -58,7 +57,8 @@ namespace SmartInventoryManagementSystem.API.Controllers
                 QuantityInStock = dto.Quantity,
                 ReorderLevel = dto.ReorderLevel,
                 ProductPrice = dto.Price,
-                ExpiryDate = dto.ExpiryDate
+                ExpiryDate = dto.ExpiryDate,
+                UserId = _currentUser.UserId
             };
 
             await _productRepository.AddProductAsync(product);
@@ -75,10 +75,8 @@ namespace SmartInventoryManagementSystem.API.Controllers
             }
             
             var existingProduct = await _productRepository.GetProductByIdAsync(id);
-            if (existingProduct == null)
-            {
+            if (existingProduct == null || existingProduct.UserId != _currentUser.UserId)
                 return NotFound($"Product with ID {id} not found.");
-            }
 
             // ---- server-side expiry check ----
             if (dto.ExpiryDate.HasValue && dto.ExpiryDate.Value.Date < DateTime.Today)
@@ -99,10 +97,8 @@ namespace SmartInventoryManagementSystem.API.Controllers
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var existingProduct = await _productRepository.GetProductByIdAsync(id);
-            if (existingProduct == null)
-            {
+            if (existingProduct == null || existingProduct.UserId != _currentUser.UserId)
                 return NotFound($"Product with ID {id} not found.");
-            }
             await _productRepository.DeleteProductAsync(id);
             return NoContent();
         }

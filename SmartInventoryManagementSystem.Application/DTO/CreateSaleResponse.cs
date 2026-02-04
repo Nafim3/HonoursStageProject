@@ -10,6 +10,8 @@ namespace SmartInventoryManagementSystem.Application.DTO
     {
         public int SaleId { get; set; }
         public decimal TotalAmount { get; set; }
-        public int ItemCount { get; set; } // New property to indicate number of items in the sale
+
+        // New property to indicate number of items in the sale
+        public int ItemCount { get; set; } 
     }
 }

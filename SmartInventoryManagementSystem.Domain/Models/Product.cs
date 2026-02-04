@@ -15,6 +15,10 @@ namespace SmartInventoryManagementSystem.Domain.Models
         public DateTime? ExpiryDate { get; set; }
         public decimal ProductPrice { get; set; }
 
+        // owneship
+        public int UserId { get; set; }
+        public User? User { get; set; }
+
 
         // One-to-many: one product can appear in many sales
         public ICollection<SaleItem>? SaleItems { get; set; }

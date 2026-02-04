@@ -11,6 +11,7 @@ namespace SmartInventoryManagementSystem.Domain.Models
         public int SaleId { get; set; }
         public decimal TotalAmount { get; set; }
         public DateTime SaleDate { get; set; }
+        public string BuyerName { get; set; } = string.Empty;
 
         // FKs
         public int UserId { get; set; }

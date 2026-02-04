@@ -14,10 +14,11 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
     public class SaleService : ISaleService
     {
         private readonly AppDbContext _context;
-
-        public SaleService(AppDbContext context)
+        private readonly int _currentUserId; // Placeholder for current user ID
+        public SaleService(AppDbContext context, ICurrentUserService currentUser)
         {
             _context = context;
+            _currentUserId = currentUser.UserId;
         }
 
         public async Task<CreateSaleResponse> CreateSaleAsync(CreateSaleRequest request)
@@ -39,17 +40,16 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                     throw new ArgumentException($"Product {duplicateProduct.Key} appears multiple times in the sale.");
 
                 // User existence check
-                var userExists = await _context.Users
-                    .AnyAsync(u => u.UserId == request.UserId);
 
-                if (!userExists)
-                    throw new Exception("Invalid user.");
+
+
 
                 // Create sale
                 var sale = new Sale
                 {
-                    UserId = request.UserId,
+                    UserId = _currentUserId,
                     SaleDate = DateTime.UtcNow,
+                    BuyerName = request.BuyerName,
                     TotalAmount = 0
                 };
 
@@ -65,7 +65,10 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
 
                     // Fetch product async
                     var product = await _context.Products
-                        .FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
+        .FirstOrDefaultAsync(p =>
+        p.ProductId == item.ProductId &&
+        p.UserId == _currentUserId);
+
 
                     if (product == null)
                         throw new Exception($"Product with ID {item.ProductId} not found.");
@@ -75,6 +78,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
 
                     var lineTotal = product.ProductPrice * item.Quantity;
 
+                    // Create sale item
                     var saleItem = new SaleItem
                     {
                         SaleId = sale.SaleId,

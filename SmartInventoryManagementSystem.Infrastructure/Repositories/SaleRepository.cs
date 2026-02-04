@@ -13,19 +13,23 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
     public class SaleRepository : ISaleRepository
     {
         private readonly AppDbContext _context;
+        private readonly ICurrentUserService _currentUserService;
 
-        public SaleRepository(AppDbContext context)
+        public SaleRepository(AppDbContext context, ICurrentUserService currentUserService)
         {
             _context = context;
+            _currentUserService = currentUserService;
         }
 
         public async Task <List <GetAllSales>> FetchAllSalesAsync()
         {
+            int userId = _currentUserService.UserId;
             return await _context.Sales
+                        .Where (sale => sale.UserId == userId)
                         .Select (sale=> new GetAllSales
                         {
                             SaleId = sale.SaleId,
-                            UserId = sale.UserId,
+                            
                             SaleDate = sale.SaleDate,
                             TotalAmount = sale.TotalAmount
                         })
@@ -35,13 +39,15 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
 
         public async Task <GetByID?> FetchSaleByIdAsync(int saleId)
         {
+            int userId = _currentUserService.UserId;
             return await _context.Sales
-                        .Where(sale => sale.SaleId == saleId)
+                        .Where(sale => sale.SaleId == saleId && sale.UserId == userId)
                         .Select(sale => new GetByID
                         {
                             SaleId = sale.SaleId,
                             SaleDate = sale.SaleDate,
                             TotalAmount = sale.TotalAmount,
+                            BuyerName = sale.BuyerName,
                             Items = sale.SaleItems
                                         .Select(item => new SaleDetails
                                         {
@@ -49,7 +55,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
                                             ProductName = item.Product!.ProductName,
                                             QuantitySold = item.Quantity,
                                             ProductPrice = item.UnitPrice,
-                                            LineTotal =  item.UnitPrice
+                                            LineTotal =  item.LineTotal
                                         })
                                         .ToList()
                         })

@@ -8,7 +8,7 @@ namespace SmartInventoryManagementSystem.Application.DTO
 {
     public class CreateSaleRequest
     {
-        public int UserId { get; set; }
+        public string BuyerName { get; set; } = string.Empty;
         public List <CreateSaleItemRequest> Items { get; set; } = new();
     }
 }

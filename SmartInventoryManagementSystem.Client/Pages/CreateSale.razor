@@ -1,0 +1,331 @@
+﻿@page "/sales/create"
+@using SmartInventoryManagementSystem.Application.DTO
+@inject HttpClient Http
+<div class = "container mt-4">
+
+    <h3 class=" text-info fw-bold mb-4">Create Sale</h3>
+
+    <!-- Buyer Name -->
+    <div class="mb-4">
+        <label class="form-label">Buyer Name</label>
+        <InputText class="form-control" @bind-Value="buyerName" />
+    </div>
+
+    <div class="row">
+
+        <!-- LEFT: Product Selection -->
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+
+                    <h5 class="text-info">Select Product</h5>
+
+                    <!-- Product dropdown -->
+                    <div class="mb-3">
+                        <label class="form-label">Product</label>
+                        <InputSelect class="form-select" @bind-Value="selectedProductId">
+                            <option value="0">-- Select Product --</option>
+                            @foreach (var p in products)
+                            {
+                                <option value="@p.ProductId">
+                                    @p.Name (@p.Quantity in stock)
+                                </option>
+                            }
+                        </InputSelect>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="mb-3">
+                        <label class="form-label">Quantity</label>
+                        <InputNumber TValue="int" 
+                                     class="form-control"
+                                     @bind-Value="selectedQuantity"/>
+                                     
+                    </div>
+
+                    <!-- Add button -->
+                    <button class="btn btn-outline-info"
+                            @onclick="AddSelectedProduct"
+                            disabled="@(!CanAdd)">
+                        Add to Cart
+                    </button>
+
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: Cart -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="text-info">Cart</h5>
+
+                    @if (!cart.Any())
+                    {
+                        <div class="mt-3 pt-3 border-top">
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Total Items</span>
+                                <strong>@TotalItems</strong>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Total Amount</span>
+                                <strong>£@TotalAmount</strong>
+                            </div>
+
+                        </div>
+
+                    }
+                    else
+                    {
+                        @foreach (var item in cart)
+                        {
+                            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+
+                                <!-- Product name + price -->
+                                <div>
+                                    <strong>@item.Name</strong>
+                                    <div class="text-muted small">£@item.UnitPrice</div>
+                                </div>
+
+                                <!-- Quantity (editable) -->
+                                <div class="d-flex align-items-center">
+                                    <InputNumber TValue="int"
+                                                 class="form-control form-control-sm"
+                                                 style="width:70px"
+                                                 Value="@item.Quantity"
+                                                 ValueChanged="@(q => UpdateQuantity(item, q))"
+                                                 ValueExpression="() => item.Quantity" />
+                                </div>
+
+                                <!-- Line total -->
+                                <div>
+                                    £@(Math.Round(item.UnitPrice * item.Quantity, 2))
+                                </div>
+
+                                <!-- Remove button -->
+                                <button class="btn btn-sm btn-danger"
+                                        @onclick="() => RemoveFromCart(item.ProductId)">
+                                    X
+                                </button>
+                            </div>
+                        }
+                    }
+
+
+
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(validationMessage))
+            {
+                <div class="alert alert-warning mt-3">
+                    @validationMessage
+                </div>
+            }
+
+            @if (cart.Any())
+            {
+                <button class="btn btn-success mt-3" @onclick="SubmitSale">
+                    Confirm Sale
+                </button>
+            }
+
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+@code {
+
+    // DTOs for API request
+    public class CreateSaleRequest
+    {
+       
+        public string BuyerName { get; set; } = "";
+        public List<CreateSaleItemRequest> Items { get; set; } = new();
+    }
+
+    public class CreateSaleItemRequest
+    {
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
+    }
+
+    public class CreateSaleResponse
+    {
+        public int SaleId { get; set; }
+        public decimal TotalAmount { get; set; }
+        public int ItemCount { get; set; }
+    }
+
+
+
+
+
+    private string buyerName = string.Empty;
+
+    private List<ProductListDto> products = new();   // Loaded from API later
+    private int? selectedProductId =0;              // Dropdown selection
+    private int selectedQuantity = 1;            // Quantity input
+
+
+
+    public class CartItem
+    {
+        public int ProductId { get; set; }
+        public string Name { get; set; } = "";
+        public decimal UnitPrice { get; set; }
+        public int Quantity { get; set; }
+        public int Stock { get; set; }
+    }
+
+    private List<CartItem> cart = new();
+
+    private int TotalItems => cart.Sum(x => x.Quantity);
+
+    private decimal TotalAmount => cart.Sum(x => x.UnitPrice * x.Quantity);
+
+    private string? validationMessage;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Http.GetFromJsonAsync<List<ProductListDto>>("api/product");
+        products = result ?? new List<ProductListDto>();
+    }
+
+    // Validation for Add to Cart button
+    private bool CanAdd =>
+        selectedProductId > 0 &&
+        selectedQuantity > 0 &&
+        selectedQuantity <= GetSelectedProductStock();
+
+    private int GetSelectedProductStock()
+    {
+        var p = products.FirstOrDefault(x => x.ProductId == selectedProductId);
+        return p?.Quantity ?? 0;
+    }
+
+    private void AddSelectedProduct()
+    {
+        if (!CanAdd)
+            return;
+
+        var product = products.First(x => x.ProductId == selectedProductId);
+
+        var existing = cart.FirstOrDefault(x => x.ProductId == product.ProductId);
+
+        if (existing != null)
+        {
+            // Increase quantity if already in cart
+            if (existing.Quantity + selectedQuantity <= existing.Stock)
+            {
+                existing.Quantity += selectedQuantity;
+            }
+            return;
+        }
+
+        // Add new item
+        cart.Add(new CartItem
+        {
+            ProductId = product.ProductId,
+            Name = product.Name ?? string.Empty,
+            UnitPrice = product.Price,
+            Quantity = selectedQuantity,
+            Stock = product.Quantity
+        });
+
+    }
+
+    private void RemoveFromCart(int productId)
+    {
+        var item = cart.FirstOrDefault(x => x.ProductId == productId);
+        if (item != null)
+            cart.Remove(item);
+    }
+
+    private void UpdateQuantity(CartItem item, int newQty)
+    {
+        if (newQty <= 0 || newQty > item.Stock)
+            return;
+
+        item.Quantity = newQty;
+    }
+
+    private async Task SubmitSale()
+    {
+        validationMessage = null;
+
+        // 1. Buyer name validation
+        if (string.IsNullOrWhiteSpace(buyerName) || buyerName.Length < 2)
+        {
+            validationMessage = "Buyer name must be at least 2 characters.";
+            return;
+        }
+
+        // 2. Cart must not be empty
+        if (!cart.Any())
+        {
+            validationMessage = "Cart cannot be empty.";
+            return;
+        }
+
+        // 3. Quantity validation
+        if (cart.Any(x => x.Quantity <= 0 || x.Quantity > x.Stock))
+        {
+            validationMessage = "One or more items have invalid quantities.";
+            return;
+        }
+
+        // 4. Build request that matches backend DTO
+        var request = new CreateSaleRequest
+        {
+             // or your logged-in user ID
+            BuyerName = buyerName,
+            Items = cart.Select(x => new CreateSaleItemRequest
+            {
+                ProductId = x.ProductId,
+                Quantity = x.Quantity
+            }).ToList()
+        };
+
+        // 5. POST to API
+        var response = await Http.PostAsJsonAsync("api/sales/CreateSale", request);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            validationMessage = "Failed to submit sale. Please try again.";
+            return;
+        }
+
+        // 6. Read backend response
+        var result = await response.Content.ReadFromJsonAsync<CreateSaleResponse>();
+
+        if (result != null)
+        {
+            // 7. Success message
+            validationMessage = $"Sale completed. Total: £{result.TotalAmount}";
+
+            // Optional: clear cart + buyer name
+            cart.Clear();
+            buyerName = "";
+        }
+        else
+        {
+            validationMessage = "Sale completed, but could not read response details.";
+        }
+    }
+
+
+}
+
+

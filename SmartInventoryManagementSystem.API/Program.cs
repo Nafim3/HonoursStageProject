@@ -24,7 +24,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 builder.Services.AddScoped<IAlertRepository, AlertRepository>();
-
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

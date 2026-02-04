@@ -13,9 +13,11 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
     public class ProductRepository : IProductRepository
     {
         private readonly AppDbContext _context;
-        public ProductRepository (AppDbContext context)
+        private readonly ICurrentUserService _currentUser;
+        public ProductRepository (AppDbContext context, ICurrentUserService currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }
 
         public async Task <List<Product>> GetProductAsync()
@@ -27,23 +29,26 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
             }
             // Eager loading Category and Sales related data
             return await _context.Products
-                //.Include(p => p.Sales)
+                
+                .Where(p => p.UserId == _currentUser.UserId)
                 .AsNoTracking()
                 .ToListAsync();
         }
 
         public async Task AddProductAsync(Product product)
         {
-           await _context.Products.AddAsync(product);
+            product.UserId = _currentUser.UserId;
+            await _context.Products.AddAsync(product);
            await _context.SaveChangesAsync();
         }
 
         public async Task <Product?> GetProductByIdAsync(int id)
         {
             return await _context.Products
-                //.Include(p => p.Sales)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.ProductId == id);
+        .AsNoTracking()
+        .FirstOrDefaultAsync(p =>
+            p.ProductId == id &&
+            p.UserId == _currentUser.UserId);
         }
 
         public async Task UpdateProductAsync(Product product)
@@ -54,17 +59,23 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
 
         public async Task DeleteProductAsync(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-               await _context.SaveChangesAsync();
-            }
+            var product = await _context.Products
+         .FirstOrDefaultAsync(p =>
+             p.ProductId == id &&
+             p.UserId == _currentUser.UserId);
+
+            if (product == null)
+                return;
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
         }
         public async Task <List<Product>> GetLowStockProductsAsync()
         {
             return await _context.Products
-                .Where(p => p.QuantityInStock <= p.ReorderLevel)
+                 .Where(p =>
+            p.UserId == _currentUser.UserId &&
+            p.QuantityInStock <= p.ReorderLevel)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -72,7 +83,9 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
         {
             var currentDate = DateTime.UtcNow;
             return await _context.Products
-                .Where(p => p.ExpiryDate <= currentDate)
+                 .Where(p =>
+            p.UserId == _currentUser.UserId &&
+            p.ExpiryDate <= currentDate)
                 .AsNoTracking()
                 .ToListAsync();
         }

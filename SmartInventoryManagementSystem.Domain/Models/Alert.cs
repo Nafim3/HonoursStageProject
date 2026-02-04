@@ -12,6 +12,10 @@ namespace SmartInventoryManagementSystem.Domain.Models
         public string Category { get; set; } = "";
         public string Message { get; set; } = "";
         public DateTime CreatedAt { get; set; }
+        
+        // Ownership
+        public int UserId { get; set; }
+        public User? User { get; set; }
 
     }
 }
