@@ -1,6 +1,8 @@
 ﻿@page "/products/edit/{id:int}"
+@attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Authorization
 @using SmartInventoryManagementSystem.Application.DTO
 @using Microsoft.AspNetCore.Components
 

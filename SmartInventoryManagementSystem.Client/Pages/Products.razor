@@ -1,7 +1,11 @@
 ﻿@page "/products"
+@attribute [Authorize]
 @inject HttpClient Http
 @inject IJSRuntime JS
+@using Microsoft.AspNetCore.Authorization
 @using SmartInventoryManagementSystem.Application.DTO
+@using SmartInventoryManagementSystem.Client.Service
+@inject APIService ApiService
 
 <div class="container mt-5">
 
@@ -78,7 +82,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        products = await Http.GetFromJsonAsync<List<ProductListDto>>("api/product");
+        var client = await ApiService.GetAuthorizedClient();
+        products = await client.GetFromJsonAsync<List<ProductListDto>>("api/product");
+
     }
 
     async Task ConfirmDelete(int id, string name)

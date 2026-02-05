@@ -1,4 +1,6 @@
 ﻿@page "/sales/create"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using SmartInventoryManagementSystem.Application.DTO
 @inject HttpClient Http
 <div class = "container mt-4">

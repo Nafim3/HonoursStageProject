@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SmartInventoryManagementSystem.Application.DTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
@@ -6,8 +7,9 @@ using SmartInventoryManagementSystem.Domain.Models;
 
 namespace SmartInventoryManagementSystem.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]   
     [ApiController]
+    [Route("api/[controller]")]
     public class SalesController : ControllerBase
     {
         private readonly ISaleService _saleService;

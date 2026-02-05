@@ -1,64 +1,86 @@
 ﻿@page "/sales/{id:int}"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using SmartInventoryManagementSystem.Application.DTO
 @inject HttpClient Http
 @inject NavigationManager Nav
 
-<h3 class="text-info fw-bold mb-4">Sale Details</h3>
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body d-flex justify-content-between align-items-center">
+        <h3 class="text-info fw-bold m-0">Sale Details</h3>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="GoBack">
+            ← Back
+        </button>
+    </div>
+</div>
 
 @if (sale == null)
 {
-    <p>Loading...</p>
+    <div class="text-center mt-5">
+        <div class="spinner-border text-info" role="status"></div>
+        <p class="mt-3 text-muted">Loading sale details...</p>
+    </div>
 }
 else
 {
-    <div class="card shadow-sm mb-4">
+    <div class="card shadow-sm border-0 mb-4">
         <div class="card-body">
 
-            <h5 class="text-info">Sale #@sale.SaleId</h5>
+            <h5 class="text-info mb-3">Summary</h5>
 
-            <div class="mt-3">
-                <strong>Buyer:</strong> @sale.BuyerName
+            <div class="row mb-2">
+                <div class="col-4 fw-semibold text-muted">Buyer</div>
+                <div class="col-8">@sale.BuyerName</div>
             </div>
 
-            <div>
-                <strong>Date:</strong> @sale.SaleDate.ToShortDateString()
+            <div class="row mb-2">
+                <div class="col-4 fw-semibold text-muted">Sale Date</div>
+                <div class="col-8">@sale.SaleDate.ToShortDateString()</div>
             </div>
 
-            <div>
-                <strong>Total Amount:</strong> £@sale.TotalAmount
+            <div class="row mb-2">
+                <div class="col-4 fw-semibold text-muted">Total Amount</div>
+                <div class="col-8 fw-bold text-success">£@sale.TotalAmount</div>
             </div>
 
         </div>
     </div>
 
-    <h5 class="text-info mb-3">Items</h5>
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Qty</th>
-                <th>Unit Price</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in sale.Items)
-            {
-                <tr>
-                    <td>@item.ProductName</td>
-                    <td>@item.QuantitySold</td>
-                    <td>£@item.ProductPrice</td>
-                    <td>£@(item.ProductPrice* item.QuantitySold)</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+            <h5 class="text-info mb-3">Items</h5>
 
-    <button class="btn btn-outline-secondary mt-3" @onclick="GoBack">
-        Back to Sales
-    </button>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-end">Unit Price</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in sale.Items)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td class="text-center">@item.QuantitySold</td>
+                                <td class="text-end">£@item.ProductPrice</td>
+                                <td class="text-end fw-semibold">£@(item.ProductPrice* item.QuantitySold)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
 }
+
+
+
 
 @code {
     [Parameter] public int id { get; set; }

@@ -1,0 +1,61 @@
+﻿@page "/"
+@using SmartInventoryManagementSystem.Application.DTO
+@inject HttpClient Http
+@inject NavigationManager Nav
+@inject SmartInventoryManagementSystem.Client.Authentication.CustomAuthStateProvider AuthStateProvider
+
+<h3>Login</h3>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Username or Email</label>
+        <InputText class="form-control"
+                   @bind-Value="loginModel.UserName" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Password</label>
+        <InputText class="form-control"
+                   type="password"
+                   @bind-Value="loginModel.Password" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Login
+    </button>
+</EditForm>
+
+@code {
+
+    private AuthUserInfo loginModel = new();
+
+    private async Task HandleLogin()
+    {
+        var response = await Http.PostAsJsonAsync("api/auth/login", loginModel);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            // TODO: show error message
+            return;
+        }
+
+        var tokenData =
+            await response.Content.ReadFromJsonAsync<TokenResponse>();
+
+        if (tokenData?.AccessToken is null)
+            return;
+
+        // persist token and notify auth state provider (stores token in localStorage)
+        await AuthStateProvider.NotifyUserAuthentication(tokenData.AccessToken);
+
+        // set Authorization header on current HttpClient immediately to avoid a 401
+        Http.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenData.AccessToken);
+
+        // navigate (no forced reload)
+        Nav.NavigateTo("/dashboard", true);
+    }
+}

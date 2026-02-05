@@ -14,15 +14,16 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
     public class SaleService : ISaleService
     {
         private readonly AppDbContext _context;
-        private readonly int _currentUserId; // Placeholder for current user ID
+        private readonly ICurrentUserService _currentUserService; // Placeholder for current user ID
         public SaleService(AppDbContext context, ICurrentUserService currentUser)
         {
             _context = context;
-            _currentUserId = currentUser.UserId;
+            _currentUserService = currentUser;
         }
 
         public async Task<CreateSaleResponse> CreateSaleAsync(CreateSaleRequest request)
         {
+            var currentUserId = _currentUserService.UserId;
             await using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
@@ -47,7 +48,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                 // Create sale
                 var sale = new Sale
                 {
-                    UserId = _currentUserId,
+                    UserId = currentUserId,
                     SaleDate = DateTime.UtcNow,
                     BuyerName = request.BuyerName,
                     TotalAmount = 0
@@ -67,7 +68,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                     var product = await _context.Products
         .FirstOrDefaultAsync(p =>
         p.ProductId == item.ProductId &&
-        p.UserId == _currentUserId);
+        p.UserId == currentUserId);
 
 
                     if (product == null)
