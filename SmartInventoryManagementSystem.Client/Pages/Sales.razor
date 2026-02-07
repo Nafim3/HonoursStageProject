@@ -6,11 +6,15 @@
 @using SmartInventoryManagementSystem.Application.DTO
 @using System.Net.Http.Json
 
+<!-- Header Card -->
 <div class="card shadow-sm border-0 mb-4">
     <div class="card-body d-flex justify-content-between align-items-center">
-        <h3 class="text-info fw-bold m-0">Sales</h3>
+        <h3 class="fw-bold text-primary m-0">Sales</h3>
+
         <span class="text-muted">
-            @(sales == null || sales.Count == 0 ? "No sales yet" : $"{sales.Count} sale(s)")
+            @(sales == null || sales.Count == 0
+                        ? "No sales yet"
+                        : $"{sales.Count} sale(s)")
         </span>
     </div>
 </div>
@@ -18,44 +22,59 @@
 @if (sales == null)
 {
     <div class="text-center mt-5">
-        <div class="spinner-border text-info" role="status"></div>
+        <div class="spinner-border text-primary" role="status"></div>
         <p class="mt-3 text-muted">Loading sales...</p>
     </div>
 }
 else if (!sales.Any())
 {
-    <div class="alert alert-info text-center">
+    <div class="alert alert-info text-center shadow-sm">
         No sales have been recorded yet.
     </div>
 }
 else
 {
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th style="width: 30%">Date</th>
-                    <th style="width: 30%">Total</th>
-                    <th style="width: 20%" class="text-end">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var sale in sales)
-                {
-                    <tr>
-                        <td>@sale.SaleDate.ToShortDateString()</td>
-                        <td class="fw-semibold">£@sale.TotalAmount</td>
-                        <td class="text-end">
-                            <a class="btn btn-sm btn-outline-info" href="/sales/@sale.SaleId">
-                                View Details
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-primary text-dark">
+                        <tr>
+                            <th style="width: 30%">Date</th>
+                            <th style="width: 30%">Total</th>
+                            <th style="width: 20%" class="text-end">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var sale in sales)
+                        {
+                            <tr>
+                                <td>@sale.SaleDate.ToShortDateString()</td>
+
+                                <td class="fw-semibold">
+                                    £@sale.TotalAmount
+                                </td>
+
+                                <td class="text-end">
+                                    <a class="btn btn-sm btn-outline-primary"
+                                       href="/sales/@sale.SaleId">
+                                        <i class="bi bi-eye me-1"></i> View Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
     </div>
 }
+
 
 @code {
     List<GetAllSales>? sales;

@@ -6,29 +6,32 @@
 @using SmartInventoryManagementSystem.Application.DTO
 @using Microsoft.AspNetCore.Components
 
-<div class="container mt-5">
+<div class="container py-4">
 
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="text-info fw-bold">Edit Product</h3>
+        <h3 class="fw-bold text-primary">Edit Product</h3>
 
         <button type="button" class="btn btn-outline-secondary" @onclick="GoBack">
-            Back
+            <i class="bi bi-arrow-left me-1"></i> Back
         </button>
     </div>
 
     @if (isLoading)
     {
-        <div class="alert alert-secondary">Loading product...</div>
+        <div class="alert alert-secondary shadow-sm">
+            Loading product...
+        </div>
     }
     else if (loadFailed)
     {
-        <div class="alert alert-danger">
+        <div class="alert alert-danger shadow-sm">
             Failed to load product. Please try again.
         </div>
     }
     else
     {
-        <div class="card shadow-sm">
+        <div class="card shadow-sm border-0">
             <div class="card-body">
 
                 <EditForm Model="product" OnValidSubmit="HandleValidSubmit">
@@ -36,48 +39,52 @@
                     <ValidationSummary />
 
                     <div class="row">
+
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Name</label>
+                            <label class="form-label fw-semibold">Name</label>
                             <InputText class="form-control" @bind-Value="product.Name" />
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Quantity</label>
+                            <label class="form-label fw-semibold">Quantity</label>
                             <InputNumber class="form-control" @bind-Value="product.Quantity" />
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Reorder Level</label>
+                            <label class="form-label fw-semibold">Reorder Level</label>
                             <InputNumber class="form-control" @bind-Value="product.ReorderLevel" />
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Price</label>
+                            <label class="form-label fw-semibold">Price</label>
                             <InputNumber class="form-control" @bind-Value="product.Price" />
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Expiry Date</label>
+                            <label class="form-label fw-semibold">Expiry Date</label>
                             <InputDate class="form-control" @bind-Value="product.ExpiryDate" />
                         </div>
+
                     </div>
 
                     @if (!string.IsNullOrEmpty(errorMessage))
                     {
-                        <div class="alert alert-danger">
+                        <div class="alert alert-danger mt-3">
                             @errorMessage
                         </div>
                     }
 
-                    <button class="btn btn-success px-4" type="submit">
-                        Save
-                    </button>
+                    <div class="mt-4">
+                        <button class="btn btn-success px-4" type="submit">
+                            <i class="bi bi-check-circle me-1"></i> Save
+                        </button>
 
-                    <button type="button"
-                            class="btn btn-secondary ms-2"
-                            @onclick="GoBack">
-                        Cancel
-                    </button>
+                        <button type="button"
+                                class="btn btn-secondary ms-2"
+                                @onclick="GoBack">
+                            Cancel
+                        </button>
+                    </div>
 
                 </EditForm>
 
@@ -85,6 +92,7 @@
         </div>
     }
 </div>
+
 
 @code {
     [Parameter] public int id { get; set; }

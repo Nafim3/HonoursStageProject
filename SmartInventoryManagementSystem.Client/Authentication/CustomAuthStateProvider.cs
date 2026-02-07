@@ -43,7 +43,7 @@ namespace SmartInventoryManagementSystem.Client.Authentication
             }
         }
 
-        // Call this after login to notify Blazor
+        
         public async Task NotifyUserAuthentication(string token)
         {
             await _localStorage.SetItemAsync("accessToken", token);
@@ -55,7 +55,7 @@ namespace SmartInventoryManagementSystem.Client.Authentication
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
         }
 
-        // Call this on logout
+        
         public async Task NotifyUserLogout()
         {
             await _localStorage.RemoveItemAsync("accessToken");
@@ -88,11 +88,11 @@ namespace SmartInventoryManagementSystem.Client.Authentication
                     }
                 }
 
-                // no exp claim -> treat as expired
+                
             }
             catch
             {
-                // parsing failed -> treat as expired for safety
+               
             }
 
             return true;
@@ -121,7 +121,7 @@ namespace SmartInventoryManagementSystem.Client.Authentication
 
                 foreach (var prop in root.EnumerateObject())
                 {
-                    // skip standard 'exp' if you don't want it as a claim
+                   
                     if (prop.NameEquals("exp")) continue;
 
                     string value = prop.Value.ValueKind switch
@@ -136,7 +136,7 @@ namespace SmartInventoryManagementSystem.Client.Authentication
                     claims.Add(new Claim(prop.Name, value));
                 }
 
-                // Add a NameIdentifier fallback if 'sub' exists and 'nameid' missing
+                
                 if (!root.TryGetProperty("nameid", out _) && root.TryGetProperty("sub", out var subProp))
                 {
                     var subVal = subProp.ValueKind == JsonValueKind.String ? subProp.GetString() ?? "" : subProp.GetRawText();
@@ -145,7 +145,7 @@ namespace SmartInventoryManagementSystem.Client.Authentication
             }
             catch
             {
-                // swallow - return empty claims (will be treated as anonymous)
+                
             }
 
             return claims;

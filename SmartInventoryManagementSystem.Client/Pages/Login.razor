@@ -4,41 +4,79 @@
 @inject NavigationManager Nav
 @inject SmartInventoryManagementSystem.Client.Authentication.CustomAuthStateProvider AuthStateProvider
 
-<h3>Login</h3>
+<div class="container py-5" style="max-width: 450px;">
 
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
 
-    <div class="mb-3">
-        <label class="form-label">Username or Email</label>
-        <InputText class="form-control"
-                   @bind-Value="loginModel.UserName" />
+            <h3 class="text-center fw-bold text-primary mb-4">
+                Login
+            </h3>
+
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <div class="alert alert-danger text-center mb-3">
+                    @ErrorMessage
+                </div>
+            }
+
+            <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <!-- Username -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Username or Email</label>
+                    <InputText class="form-control"
+                               @bind-Value="loginModel.UserName" />
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Password</label>
+                    <InputText class="form-control"
+                               type="password"
+                               @bind-Value="loginModel.Password" />
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                </button>
+
+                <div class="text-center mt-3">
+                    <span class="text-muted">Don't Have an Account?</span>
+                    <a href="/register" class="text-primary fw-semibold ms-1">
+                        Register Here
+                    </a>
+                </div>
+
+
+            </EditForm>
+
+        </div>
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Password</label>
-        <InputText class="form-control"
-                   type="password"
-                   @bind-Value="loginModel.Password" />
-    </div>
+</div>
 
-    <button type="submit" class="btn btn-primary">
-        Login
-    </button>
-</EditForm>
 
 @code {
+
+
+
+    private string? ErrorMessage;
 
     private AuthUserInfo loginModel = new();
 
     private async Task HandleLogin()
     {
+
+        ErrorMessage = null;
         var response = await Http.PostAsJsonAsync("api/auth/login", loginModel);
 
         if (!response.IsSuccessStatusCode)
         {
-            // TODO: show error message
+            ErrorMessage = "Invalid username or password";
             return;
         }
 
@@ -46,12 +84,16 @@
             await response.Content.ReadFromJsonAsync<TokenResponse>();
 
         if (tokenData?.AccessToken is null)
+        { 
+            ErrorMessage = "Login failed. Try again"; 
             return;
+        }
+           
 
         // persist token and notify auth state provider (stores token in localStorage)
         await AuthStateProvider.NotifyUserAuthentication(tokenData.AccessToken);
 
-        // set Authorization header on current HttpClient immediately to avoid a 401
+        
         Http.DefaultRequestHeaders.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenData.AccessToken);
 

@@ -15,10 +15,12 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
     {
         private readonly AppDbContext _context;
         private readonly ICurrentUserService _currentUserService; // Placeholder for current user ID
-        public SaleService(AppDbContext context, ICurrentUserService currentUser)
+        private readonly INotificationService _notificationService; // For low stock notifications
+        public SaleService(AppDbContext context, ICurrentUserService currentUser, INotificationService notificationService)
         {
             _context = context;
             _currentUserService = currentUser;
+            _notificationService = notificationService;
         }
 
         public async Task<CreateSaleResponse> CreateSaleAsync(CreateSaleRequest request)
@@ -66,9 +68,9 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
 
                     // Fetch product async
                     var product = await _context.Products
-        .FirstOrDefaultAsync(p =>
-        p.ProductId == item.ProductId &&
-        p.UserId == currentUserId);
+                              .FirstOrDefaultAsync(p =>
+                              p.ProductId == item.ProductId &&
+                              p.UserId == currentUserId);
 
 
                     if (product == null)
@@ -93,6 +95,12 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
 
                     // Update stock
                     product.QuantityInStock -= item.Quantity;
+
+                    if (product.QuantityInStock <= product.ReorderLevel)
+                    {
+                        await _notificationService.NotifyLowStockAsync(product, currentUserId);
+                    }
+
                 }
 
                 await _context.SaleItems.AddRangeAsync(saleItems);

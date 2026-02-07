@@ -3,6 +3,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
+
+// this class is responsible for providing an HttpClient instance with the JWT token included in the Authorization header for authenticated API requests.
+// It retrieves the token from local storage and sets it in the HttpClient's headers before returning the client for use in making API calls.
 namespace SmartInventoryManagementSystem.Client.Service
 {
     public class APIService

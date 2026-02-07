@@ -5,6 +5,8 @@ using SmartInventoryManagementSystem.Application.DTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 using SmartInventoryManagementSystem.Domain.Models;
 using SmartInventoryManagementSystem.Infrastructure.Persistence;
+using SmartInventoryManagementSystem.Infrastructure.Services;
+using System.Security.Claims;
 
 namespace SmartInventoryManagementSystem.API.Controllers
 {
@@ -15,13 +17,14 @@ namespace SmartInventoryManagementSystem.API.Controllers
     {
         
         private readonly IProductRepository _productRepository; // used to access product data
-        private readonly IProductService _productService; // used for product-related business logic
         private readonly ICurrentUserService _currentUser;
-        public ProductController(IProductRepository productRepository, IProductService productService, ICurrentUserService currentUser)
+            private readonly INotificationService _notificationService; 
+        public ProductController(IProductRepository productRepository, ICurrentUserService currentUser, INotificationService notificationService)
         {
             _productRepository = productRepository;
-            _productService = productService;
+            
             _currentUser = currentUser;
+            _notificationService = notificationService;
         }
 
         [HttpGet]
@@ -105,19 +108,25 @@ namespace SmartInventoryManagementSystem.API.Controllers
             return NoContent();
         }
 
-        [HttpGet("Low-stock/check")]
-        public async Task <IActionResult> CheckLowStock()
-        {
-           await _productService.CheckLowStockAndNotifyAsync();
-            return Ok("Low stock check completed and notifications sent if necessary.");
-        }
+
 
         [HttpGet("Expired-products/check")]
         public async Task <IActionResult> CheckExpiredProducts()
         {
-           await _productService.CheckExpiredProductsAndNotifyAsync();
-            return Ok("Expired products check completed and notifications sent if necessary.");
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            // Fetch expired products for this user
+            var expiredProducts = await _productRepository.GetExpiredProductsAsync(userId);
+
+            // Create alerts for each expired product
+            foreach (var product in expiredProducts)
+            {
+                await _notificationService.NotifyExpiredProductsAsync(product, userId);
+            }
+            return Ok();
         }
 
     }
+
+
 }

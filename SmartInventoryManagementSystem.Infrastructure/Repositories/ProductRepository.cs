@@ -70,7 +70,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
         }
-        public async Task <List<Product>> GetLowStockProductsAsync()
+        public async Task <List<Product>> GetLowStockProductsAsync(int userId)
         {
             return await _context.Products
                  .Where(p =>
@@ -79,7 +79,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
-        public async Task <List<Product>> GetExpiredProductsAsync()
+        public async Task <List<Product>> GetExpiredProductsAsync(int userId)
         {
             var currentDate = DateTime.UtcNow;
             return await _context.Products

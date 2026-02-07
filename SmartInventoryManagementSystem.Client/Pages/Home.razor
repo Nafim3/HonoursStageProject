@@ -13,79 +13,149 @@
 @inject ILocalStorageService LocalStorage
 @inject AuthenticationStateProvider AuthStateProvider
 
-<div class="container mt-4">
+<div class="container py-4">
 
-    <div class="text-end mb-3">
-        <button class="btn btn-outline-danger" @onclick="Logout">Logout</button>
+    <!-- Logout -->
+    <div class="d-flex justify-content-end align-items-center gap-3 mb-4">
+
+        <!-- Bell Icon -->
+        <div class="dropdown">
+            <button class="btn position-relative" @onclick="Toggle">
+                <i class="bi bi-bell fs-5"></i>
+
+                @if (Alerts.Any())
+                {
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+                        @Alerts.Count
+                    </span>
+                }
+            </button>
+
+            @if (IsOpen)
+            {
+                <div class="dropdown-menu dropdown-menu-end show shadow">
+                    @if (!Alerts.Any())
+                    {
+                        <div class="dropdown-item text-muted">No notifications</div>
+                    }
+                    else
+                    {
+                        @foreach (var alert in Alerts)
+                        {
+                            <div class="dropdown-item alert-item"
+                                 @onclick="() => Navigate(alert)">
+                                <strong class="@GetColor(alert.Category)">
+                                    @alert.Category:
+                                </strong>
+                                @alert.Message
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Account Dropdown -->
+        <div class="dropdown">
+            <button class="btn btn-light dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                <i class="bi bi-person-circle"></i>
+                Account
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end shadow">
+                <li>
+                    <button class="dropdown-item text-danger"
+                            @onclick="Logout">
+                        <i class="bi bi-box-arrow-right me-2"></i>
+                        Logout
+                    </button>
+                </li>
+            </ul>
+        </div>
+
     </div>
 
 
-    <h2 class="text-center mb-4 text-info fw-bold">
+    <!-- Title -->
+    <h2 class="text-center mb-5 text-primary fw-bold">
         Inventory Management System
     </h2>
 
     @if (dashboard == null)
     {
-        <p class="text-center text-muted">Loading dashboard...</p>
+        <div class="text-center text-muted py-5">
+            <div class="spinner-border text-primary mb-3"></div>
+            <p>Loading dashboard...</p>
+        </div>
     }
     else
     {
         <!-- KPI Cards -->
         <div class="row g-4">
 
-            <div class="col-md-4">
-                <div class="card bg-dark text-center p-4 shadow border-info border-1">
-                    <h6 class="text-uppercase text-muted">Total Products</h6>
-                    <h2 class="fw-bold text-info display-6">@dashboard.TotalProducts</h2>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-primary">
+                    <div class="card-body text-center">
+                        <h6 class="text-uppercase text-muted small">Total Products</h6>
+                        <h2 class="fw-bold text-primary">@dashboard.TotalProducts</h2>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card bg-dark text-center p-4 shadow border-success border-1">
-                    <h6 class="text-uppercase text-muted">Sales Today</h6>
-                    <h2 class="fw-bold text-success display-6">@dashboard.SalesToday</h2>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-success">
+                    <div class="card-body text-center">
+                        <h6 class="text-uppercase text-muted small">Sales Today</h6>
+                        <h2 class="fw-bold text-success">@dashboard.SalesToday</h2>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card bg-dark text-center p-4 shadow border-danger border-1">
-                    <h6 class="text-uppercase text-muted">Low Stock Items</h6>
-                    <h2 class="fw-bold text-danger display-6">@dashboard.LowStockCount</h2>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-warning">
+                    <div class="card-body text-center">
+                        <h6 class="text-uppercase text-muted small">Low Stock Items</h6>
+                        <h2 class="fw-bold text-warning">@dashboard.LowStockCount</h2>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card bg-dark text-center p-4 shadow border-danger border-1">
-                    <h6 class="text-uppercase text-muted">Expired Products</h6>
-                    <h2 class="fw-bold text-danger display-6">@dashboard.ExpiredProductsCount</h2>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-danger">
+                    <div class="card-body text-center">
+                        <h6 class="text-uppercase text-muted small">Expired Products</h6>
+                        <h2 class="fw-bold text-danger">@dashboard.ExpiredProductsCount</h2>
+                    </div>
                 </div>
             </div>
-
 
         </div>
 
-        <hr class="my-5 border-secondary" />
+        <!-- Divider -->
+        <hr class="my-5 opacity-25" />
 
         <!-- Quick Actions -->
-        <h4 class="text-info mb-3">Quick Actions</h4>
+        <h4 class="text-primary mb-3 fw-semibold">Quick Actions</h4>
 
         <div class="row g-3">
 
             <div class="col-md-3">
-                <a class="btn btn-outline-info w-100 py-3 fw-bold" href="/products">
-                    Manage Products
+                <a class="btn btn-outline-primary w-100 py-3 fw-bold" href="/products">
+                    <i class="bi bi-box-seam me-1"></i> Manage Products
                 </a>
             </div>
 
             <div class="col-md-3">
                 <a class="btn btn-outline-success w-100 py-3 fw-bold" href="/sales">
-                    View Sales
+                    <i class="bi bi-receipt me-1"></i> View Sales
                 </a>
             </div>
 
             <div class="col-md-3">
-                <a class="btn btn-outline-success w-100 py-3 fw-bold" href="/sales/create">
-                    Make a Sale
+                <a class="btn btn-outline-info w-100 py-3 fw-bold" href="/sales/create">
+                    <i class="bi bi-cart-plus me-1"></i> Make a Sale
                 </a>
             </div>
 
@@ -93,15 +163,53 @@
     }
 </div>
 
+
 @code 
 {
     Dashboard? dashboard;
 
+    private bool IsOpen;
+    private List<AlertDTO> Alerts = new();
+
     protected override async Task OnInitializedAsync()
     {
         var client = await ApiService.GetAuthorizedClient();
+        await client.GetAsync("api/product/Expired-products/check");
         dashboard = await client.GetFromJsonAsync<Dashboard>("api/dashboard");
+
+        await LoadAlertsAsync();
+
+
     }
+
+    private async Task LoadAlertsAsync()
+    {
+        Alerts = await Http
+            .GetFromJsonAsync<List<AlertDTO>>("api/alert/bell")
+            ?? new();
+    }
+
+    private void Toggle()
+    {
+        IsOpen = !IsOpen;
+    }
+
+    private void Navigate(AlertDTO alert)
+    {
+        IsOpen = false;
+
+        if (alert.Category == "Expired")
+            Nav.NavigateTo("/products/expired");
+        else
+            Nav.NavigateTo("/products/low-stock");
+    }
+
+    private string GetColor(string category)
+        => category == "Expired"
+           ? "text-danger"
+           : "text-warning";
+
+
 
     private async Task Logout()
     {

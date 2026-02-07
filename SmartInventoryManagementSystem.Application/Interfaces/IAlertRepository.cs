@@ -10,6 +10,9 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
     public interface IAlertRepository
     {
         Task AddAsync(Alert alert);
-        Task<List<Alert>> GetRecentAsync(string category, int limit);
+        Task<List<Alert>> GetRecentAsync(int userId, string category, int limit);
+        Task <bool> ExistAsync(int userId, string category, int? productId);
+        Task<int> CountAsync(int userId, string category);
+
     }
 }

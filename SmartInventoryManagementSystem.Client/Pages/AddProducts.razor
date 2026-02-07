@@ -5,17 +5,19 @@
 @using Microsoft.AspNetCore.Authorization
 @using SmartInventoryManagementSystem.Application.DTO
 
-<div class="container mt-5">
+<div class="container py-4">
 
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="text-info fw-bold">Add Product</h3>
+        <h3 class="fw-bold text-primary">Add Product</h3>
 
-        <button class="btn btn-outline-secondary" @onclick="@BackToProducts">
-            Back
+        <button class="btn btn-outline-secondary" @onclick="BackToProducts">
+            <i class="bi bi-arrow-left me-1"></i> Back
         </button>
     </div>
 
-    <div class="card shadow-sm">
+    <!-- Quartz Card -->
+    <div class="card shadow-sm border-0">
         <div class="card-body">
 
             <EditForm Model="product" OnValidSubmit="HandleValidSubmit">
@@ -23,34 +25,38 @@
                 <ValidationSummary />
 
                 <div class="row">
+
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Name</label>
+                        <label class="form-label fw-semibold">Name</label>
                         <InputText class="form-control" @bind-Value="product.Name" />
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Quantity</label>
+                        <label class="form-label fw-semibold">Quantity</label>
                         <InputNumber class="form-control" @bind-Value="product.Quantity" />
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Reorder Level</label>
+                        <label class="form-label fw-semibold">Reorder Level</label>
                         <InputNumber class="form-control" @bind-Value="product.ReorderLevel" />
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Price</label>
+                        <label class="form-label fw-semibold">Price</label>
                         <InputNumber class="form-control" @bind-Value="product.Price" />
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Expiry Date</label>
+                        <label class="form-label fw-semibold">Expiry Date</label>
                         <InputDate class="form-control" @bind-Value="product.ExpiryDate" />
                     </div>
+
                 </div>
 
-                <div class="mt-3">
-                    <button class="btn btn-success px-4" type="submit">Add Product</button>
+                <div class="mt-4">
+                    <button class="btn btn-success px-4" type="submit">
+                        <i class="bi bi-plus-circle me-1"></i> Add Product
+                    </button>
                 </div>
 
             </EditForm>
@@ -59,6 +65,7 @@
     </div>
 
 </div>
+
 
 @code {
     private CreateProductRequest product = new();

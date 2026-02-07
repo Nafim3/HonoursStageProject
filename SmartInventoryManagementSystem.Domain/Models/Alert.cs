@@ -17,5 +17,9 @@ namespace SmartInventoryManagementSystem.Domain.Models
         public int UserId { get; set; }
         public User? User { get; set; }
 
+        // Optional link to product (for context in alert)
+        public int? ProductId { get; set; }
+
     }
 }
+
