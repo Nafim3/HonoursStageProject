@@ -213,14 +213,25 @@
 
     private async Task Logout()
     {
-        if (AuthStateProvider is CustomAuthStateProvider customProvider)
-            await customProvider.NotifyUserLogout();
-        else
+        try
+        {
+            // Notify the auth provider
+            if (AuthStateProvider is CustomAuthStateProvider customProvider)
+                await customProvider.NotifyUserLogout();
+
+            // 2. Remove tokens from storage
             await LocalStorage.RemoveItemAsync("accessToken");
+            await LocalStorage.RemoveItemAsync("refreshToken");
 
-        try { Http.DefaultRequestHeaders.Authorization = null; } catch { }
+            // Clear HttpClient auth header
+            Http.DefaultRequestHeaders.Authorization = null;
+        }
+        catch
+        {}
 
-        Nav.NavigateTo("/", true);
+        // 4. Redirect
+        Nav.NavigateTo("/");
+
     }
 
 }

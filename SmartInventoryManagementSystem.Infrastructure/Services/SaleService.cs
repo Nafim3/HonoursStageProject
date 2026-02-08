@@ -42,11 +42,6 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                 if (duplicateProduct != null)
                     throw new ArgumentException($"Product {duplicateProduct.Key} appears multiple times in the sale.");
 
-                // User existence check
-
-
-
-
                 // Create sale
                 var sale = new Sale
                 {

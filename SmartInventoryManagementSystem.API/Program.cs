@@ -7,10 +7,16 @@ using SmartInventoryManagementSystem.Infrastructure.Persistence;
 using SmartInventoryManagementSystem.Infrastructure.Repositories;
 using SmartInventoryManagementSystem.Infrastructure.Services;
 using System.Text;
+using DinkToPdf;
+using DinkToPdf.Contracts;
+using SmartInventoryManagementSystem.Infrastructure.PDF;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+var context = new CustomAssemblyLoadContext();
+context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "Native", "libwkhtmltox.dll"));
 
 // Add services to the container.
 
@@ -44,6 +50,12 @@ builder.Services.AddScoped<IAlertRepository, AlertRepository>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IAuthServices, AuthServices>();
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddSingleton<IConverter>(
+    new SynchronizedConverter(new PdfTools())
+);
+
+builder.Services.AddScoped<IPdfService, PdfService>();
 
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

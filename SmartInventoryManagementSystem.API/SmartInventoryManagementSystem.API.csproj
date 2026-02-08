@@ -25,4 +25,14 @@
     <ProjectReference Include="..\SmartInventoryManagementSystem.Infrastructure\SmartInventoryManagementSystem.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Native\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Native\libwkhtmltox.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

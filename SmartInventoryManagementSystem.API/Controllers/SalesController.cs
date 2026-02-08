@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using SmartInventoryManagementSystem.Application.DTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 using SmartInventoryManagementSystem.Domain.Models;
+using SmartInventoryManagementSystem.Infrastructure.Repositories;
+using System.Security.Claims;
 
 namespace SmartInventoryManagementSystem.API.Controllers
 {
@@ -13,10 +15,14 @@ namespace SmartInventoryManagementSystem.API.Controllers
     public class SalesController : ControllerBase
     {
         private readonly ISaleService _saleService;
+            private readonly ISaleRepository _saleRepository;
+            private readonly IPdfService _pdfService;
 
-        public SalesController(ISaleService saleService)
+        public SalesController(ISaleService saleService, ISaleRepository saleRepository, IPdfService pdfService)
         {
             _saleService = saleService;
+            _saleRepository = saleRepository;
+            _pdfService = pdfService;
         }
 
         [HttpPost("CreateSale")]
@@ -54,6 +60,19 @@ namespace SmartInventoryManagementSystem.API.Controllers
                 return NotFound(new { MSG = $"Sale with ID {saleId} not found." });
             }
             return Ok(sale);
+        }
+
+        [HttpGet("{saleId}/invoice")]
+        public async Task <IActionResult> GetInvoice (int saleId)
+        {
+            var sale = await _saleRepository.FetchSaleByIdAsync(saleId);
+
+            if (sale == null)
+                return NotFound();
+
+            var pdf = _pdfService.GenerateInvoicePdf(sale);
+
+            return File(pdf, "application/pdf", $"invoice-{saleId}.pdf");
         }
     }
 }
