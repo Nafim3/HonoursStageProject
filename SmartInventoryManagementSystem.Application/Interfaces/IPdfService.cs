@@ -1,4 +1,4 @@
-﻿using SmartInventoryManagementSystem.Application.DTO;
+﻿using SmartInventoryManagementSystem.Application.DTO.SaleDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,6 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
 {
     public interface IPdfService
     {
-        byte[] GenerateInvoicePdf(GetByID sale);
+       Task <byte[]> GenerateInvoicePdf(GetByID sale);
     }
 }

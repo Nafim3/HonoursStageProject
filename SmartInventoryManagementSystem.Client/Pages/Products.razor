@@ -3,9 +3,9 @@
 @inject HttpClient Http
 @inject IJSRuntime JS
 @using Microsoft.AspNetCore.Authorization
-@using SmartInventoryManagementSystem.Application.DTO
-@using SmartInventoryManagementSystem.Client.Service
-@inject APIService ApiService
+@using SmartInventoryManagementSystem.Application.DTO.ProductDTO
+
+
 
 <div class="container py-4">
 
@@ -88,8 +88,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var client = await ApiService.GetAuthorizedClient();
-        products = await client.GetFromJsonAsync<List<ProductListDto>>("api/product");
+        products = await Http.GetFromJsonAsync<List<ProductListDto>>("api/product");
 
     }
 

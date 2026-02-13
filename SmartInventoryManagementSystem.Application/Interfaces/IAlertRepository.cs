@@ -13,6 +13,10 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
         Task<List<Alert>> GetRecentAsync(int userId, string category, int limit);
         Task <bool> ExistAsync(int userId, string category, int? productId);
         Task<int> CountAsync(int userId, string category);
+        Task<Alert?> GetByIdAsync(int id);
+        Task DeleteAsync(Alert alert);
+        Task<List<Alert>> GetAllForUserAsync(int userId);
+
 
     }
 }

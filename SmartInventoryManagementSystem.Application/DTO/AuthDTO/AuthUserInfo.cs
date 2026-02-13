@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartInventoryManagementSystem.Application.DTO
+namespace SmartInventoryManagementSystem.Application.DTO.AuthDTO
 {
     public class AuthUserInfo
     {

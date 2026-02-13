@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SmartInventoryManagementSystem.Application.DTO;
+using SmartInventoryManagementSystem.Application.DTO.ProductDTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 using SmartInventoryManagementSystem.Domain.Models;
 using SmartInventoryManagementSystem.Infrastructure.Persistence;

@@ -1,5 +1,5 @@
 ﻿@page "/"
-@using SmartInventoryManagementSystem.Application.DTO
+@using SmartInventoryManagementSystem.Application.DTO.AuthDTO
 @inject HttpClient Http
 @inject NavigationManager Nav
 @inject SmartInventoryManagementSystem.Client.Authentication.CustomAuthStateProvider AuthStateProvider
@@ -94,10 +94,7 @@
         await AuthStateProvider.NotifyUserAuthentication(tokenData.AccessToken);
 
         
-        Http.DefaultRequestHeaders.Authorization =
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenData.AccessToken);
 
-        // navigate (no forced reload)
         Nav.NavigateTo("/dashboard", true);
     }
 }

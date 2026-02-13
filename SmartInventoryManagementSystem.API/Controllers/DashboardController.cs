@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SmartInventoryManagementSystem.Application.DTO;
+using SmartInventoryManagementSystem.Application.DTO.DashboardDTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 using System.Security.Claims;
 

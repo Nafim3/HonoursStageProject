@@ -1,5 +1,4 @@
-﻿
-using SmartInventoryManagementSystem.Application.DTO;
+﻿using SmartInventoryManagementSystem.Application.DTO.AuthDTO;
 using SmartInventoryManagementSystem.Domain.Models;
 using System;
 using System.Collections.Generic;

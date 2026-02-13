@@ -1,6 +1,5 @@
 ﻿@page "/register"
-@using SmartInventoryManagementSystem.Application.DTO
-
+@using SmartInventoryManagementSystem.Application.DTO.AuthDTO
 @inject HttpClient Http
 @inject NavigationManager Nav
 
@@ -70,7 +69,7 @@
 
     private async Task HandleRegister()
     {
-        var response = await Http.PostAsJsonAsync("api/auth/register", registerModel);
+        var response = await Http.PostAsJsonAsync("api/auth/Register", registerModel);
 
         if (response.IsSuccessStatusCode)
         {

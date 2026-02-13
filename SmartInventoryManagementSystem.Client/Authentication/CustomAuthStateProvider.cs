@@ -151,6 +151,26 @@ namespace SmartInventoryManagementSystem.Client.Authentication
             return claims;
         }
 
+        public static int ExtractUserId(string jwt)
+        {
+            var payload = jwt.Split('.')[1];
+            var json = DecodeBase64(payload);
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+
+            // Try nameid
+            if (root.TryGetProperty("nameid", out var idProp))
+                return int.Parse(idProp.GetString()!);
+
+            // Try sub
+            if (root.TryGetProperty("sub", out var subProp))
+                return int.Parse(subProp.GetString()!);
+
+            throw new Exception("UserId not found in token");
+        }
+
+
+
     }
-    
+
 }

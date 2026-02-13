@@ -51,5 +51,30 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
             .Where(a => a.UserId == userId && a.Category == category)
             .CountAsync();
         }
+
+        public async Task<Alert?> GetByIdAsync(int id)
+        {
+            return await _context.Alerts.FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+
+        public async Task DeleteAsync(Alert alert)
+        {
+            if (alert != null)
+            {
+                _context.Alerts.Remove(alert);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<Alert>> GetAllForUserAsync(int userId)
+        {
+            return await _context.Alerts
+                .Where(a => a.UserId == userId)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+        }
+
+
     }
 }

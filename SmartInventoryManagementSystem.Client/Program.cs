@@ -33,7 +33,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SmartInventoryManagementSystem.Client;
 using SmartInventoryManagementSystem.Client.Authentication;
-using SmartInventoryManagementSystem.Client.Service;
+
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -46,7 +46,8 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthMessageHandler>();
 
-builder.Services.AddScoped<APIService>();
+
+
 
 // configure an HttpClient that uses the auth handler and points to your API
 builder.Services.AddHttpClient("API", client =>

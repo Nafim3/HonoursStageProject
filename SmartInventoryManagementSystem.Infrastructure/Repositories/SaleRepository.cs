@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartInventoryManagementSystem.Application.DTO;
+using SmartInventoryManagementSystem.Application.DTO.SaleDTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 using SmartInventoryManagementSystem.Infrastructure.Persistence;
 using System;

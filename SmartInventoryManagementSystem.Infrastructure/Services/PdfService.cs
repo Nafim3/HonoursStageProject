@@ -1,6 +1,5 @@
 ﻿using DinkToPdf;
 using DinkToPdf.Contracts;
-using SmartInventoryManagementSystem.Application.DTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 using SmartInventoryManagementSystem.Infrastructure.PDF;
 using SmartInventoryManagementSystem.Domain.Models;
@@ -9,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SmartInventoryManagementSystem.Application.DTO.SaleDTO;
 
 
 
@@ -23,14 +23,14 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
              _converter = converter;
         }
 
-        public byte[] GenerateInvoicePdf(GetByID sale)
+        public async Task <byte[]> GenerateInvoicePdf(GetByID sale)
         {
             var html = BuildInvoice.Build(sale);
 
             var doc = new HtmlToPdfDocument
             {
-                GlobalSettings =
-        {
+                GlobalSettings = new GlobalSettings
+                {
             PaperSize = PaperKind.A4,
             Orientation = Orientation.Portrait
         },
@@ -43,7 +43,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
         }
             };
 
-            return _converter.Convert(doc);
+            return await Task.Run(() => _converter.Convert(doc));
         }
     }
 }

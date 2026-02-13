@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using SmartInventoryManagementSystem.Application.DTO;
+using SmartInventoryManagementSystem.Application.DTO.AuthDTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 using SmartInventoryManagementSystem.Domain.Models;
 using SmartInventoryManagementSystem.Infrastructure.Persistence;

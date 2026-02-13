@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SmartInventoryManagementSystem.Application.DTO;
+using SmartInventoryManagementSystem.Application.DTO.SaleDTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 using SmartInventoryManagementSystem.Domain.Models;
 using SmartInventoryManagementSystem.Infrastructure.Repositories;
@@ -70,7 +70,7 @@ namespace SmartInventoryManagementSystem.API.Controllers
             if (sale == null)
                 return NotFound();
 
-            var pdf = _pdfService.GenerateInvoicePdf(sale);
+            var pdf = await _pdfService.GenerateInvoicePdf(sale);
 
             return File(pdf, "application/pdf", $"invoice-{saleId}.pdf");
         }

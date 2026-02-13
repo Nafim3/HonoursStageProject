@@ -1,4 +1,4 @@
-﻿using SmartInventoryManagementSystem.Application.DTO;
+﻿using SmartInventoryManagementSystem.Application.DTO.SaleDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;

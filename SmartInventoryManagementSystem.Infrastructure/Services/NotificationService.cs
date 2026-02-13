@@ -1,4 +1,4 @@
-﻿using SmartInventoryManagementSystem.Application.DTO;
+﻿using SmartInventoryManagementSystem.Application.DTO.NotificationDTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 using SmartInventoryManagementSystem.Domain.Models;
 using System;
@@ -78,6 +78,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                 .OrderByDescending(a => a.CreatedAt)
                 .Select(a => new AlertDTO
                 {
+                    Id = a.Id,
                     Category = a.Category,
                     Message = a.Message,
                     CreatedAt = a.CreatedAt
