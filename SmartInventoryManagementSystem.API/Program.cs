@@ -49,6 +49,7 @@ builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 builder.Services.AddScoped<IAlertRepository, AlertRepository>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IAuthServices, AuthServices>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<IConverter>(

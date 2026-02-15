@@ -29,20 +29,6 @@ namespace SmartInventoryManagementSystem.API.Controllers
         [HttpGet("bell")]
         public async Task<IActionResult> GetBellAlerts()
         {
-            //var userId = int.Parse(User.FindFirstValue (ClaimTypes.NameIdentifier)!);
-
-            //var alerts = await _alertRepository.GetAllForUserAsync(userId);
-
-            //var dto = alerts.Select(a => new AlertDTO
-            //{
-            //    Id = a.Id,
-            //    ProductId = a.ProductId,
-            //    Category = a.Category,
-            //    Message = a.Message,
-            //    CreatedAt = a.CreatedAt
-            //}).ToList();
-
-            //return Ok(dto);
 
             var userId = _currentUserService.UserId;
 

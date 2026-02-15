@@ -48,7 +48,6 @@ builder.Services.AddScoped<AuthMessageHandler>();
 
 
 
-
 // configure an HttpClient that uses the auth handler and points to your API
 builder.Services.AddHttpClient("API", client =>
 {

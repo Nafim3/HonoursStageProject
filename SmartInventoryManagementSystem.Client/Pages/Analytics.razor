@@ -1,0 +1,121 @@
+﻿@attribute [Authorize]
+@page "/analytics"
+@using Microsoft.AspNetCore.Authorization
+@inject HttpClient Http
+
+<div style="
+    max-width:900px;
+    margin:180px auto;
+    font-family:Segoe UI, sans-serif;
+    text-align:center;">
+
+    <!-- Row containing BOTH items, centered together -->
+    <div style="
+        display:flex;
+      justify-content:space-between;
+    align-items:center;
+    margin-top:-80px;   /* pulls the header UP */
+    margin-bottom:40px;">
+
+        <!-- Back button on the LEFT -->
+        <a href="/dashboard"
+           style="
+            padding:10px 18px;
+            background:#3f51b5;
+            color:white;
+            border-radius:8px;
+            text-decoration:none;
+            font-weight:600;">
+            ← Back to Dashboard
+        </a>
+
+        <!-- Title centered relative to the whole page -->
+        <h2 style="font-size:1.8rem; margin:0 auto; color:white;">
+            📈 Revenue Trend
+        </h2>
+
+        <!-- Spacer to balance the flex layout -->
+        <div style="width:140px;"></div>
+
+    </div>
+
+    <!-- Centered text -->
+    <div style="
+    font-size:1.3rem;
+    font-weight:600;
+    margin-top:150px;
+    margin-bottom:10px;
+    color:white;">
+        @salesData[0].MonthLabel
+    </div>
+
+    <div style="
+    font-size:1.6rem;
+    font-weight:700;
+    margin-bottom:40px;  /* adds extra spacing before the chart */
+    color:white;">
+        £@salesData[0].Revenue
+    </div>
+
+
+    <!-- Chart area -->
+    <div style="position:relative; height:160px; margin-top:20px;">
+
+        <!-- Horizontal baseline -->
+        <div style="
+            position:absolute;
+            bottom:20px;
+            left:0;
+            width:100%;
+            height:3px;
+            background:rgba(255,255,255,0.4);
+            border-radius:2px;">
+        </div>
+
+        <!-- Vertical bar -->
+        @{
+            var max = salesData.Max(x => x.Revenue);
+            var height = max == 0 ? 0 : (salesData[0].Revenue / max) * 120;
+        }
+
+        <div style="
+            position:absolute;
+            bottom:20px;
+            left:50%;
+            transform:translateX(-50%);
+            width:20px;
+            height:@($"{height}px");
+            background:white;
+            border-radius:10px;">
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private List<SalesAnalysisModel> salesData = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var apiData = await Http.GetFromJsonAsync<List<SalesAnalysisModel>>("api/analytics/chart")
+                     ?? new();
+
+        salesData = apiData
+            .Select(x => new SalesAnalysisModel
+            {
+                Year = x.Year,
+                Month = x.Month,
+                Revenue = (double)x.Revenue,
+                MonthLabel = new DateTime(x.Year, x.Month, 1).ToString("MMM yyyy")
+            })
+            .ToList();
+    }
+
+    public class SalesAnalysisModel
+    {
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public double Revenue { get; set; }
+        public string MonthLabel { get; set; } = string.Empty;
+    }
+}
