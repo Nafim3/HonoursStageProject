@@ -14,8 +14,8 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
     public class SaleService : ISaleService
     {
         private readonly AppDbContext _context;
-        private readonly ICurrentUserService _currentUserService; // Placeholder for current user ID
-        private readonly INotificationService _notificationService; // For low stock notifications
+        private readonly ICurrentUserService _currentUserService;
+        private readonly INotificationService _notificationService;
         public SaleService(AppDbContext context, ICurrentUserService currentUser, INotificationService notificationService)
         {
             _context = context;
@@ -30,11 +30,11 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
 
             try
             {
-                // Empty sale check
+
                 if (request.Items == null || !request.Items.Any())
                     throw new ArgumentException("Sale must contain at least one item.");
 
-                // Duplicate product check
+
                 var duplicateProduct = request.Items
                     .GroupBy(i => i.ProductId)
                     .FirstOrDefault(g => g.Count() > 1);
@@ -42,7 +42,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                 if (duplicateProduct != null)
                     throw new ArgumentException($"Product {duplicateProduct.Key} appears multiple times in the sale.");
 
-                // Create sale
+
                 var sale = new Sale
                 {
                     UserId = currentUserId,
@@ -61,7 +61,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                     if (item.Quantity <= 0)
                         throw new ArgumentException("Quantity must be greater than zero.");
 
-                    // Fetch product async
+
                     var product = await _context.Products
                               .FirstOrDefaultAsync(p =>
                               p.ProductId == item.ProductId &&
@@ -76,7 +76,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
 
                     var lineTotal = product.ProductPrice * item.Quantity;
 
-                    // Create sale item
+
                     var saleItem = new SaleItem
                     {
                         SaleId = sale.SaleId,
@@ -88,7 +88,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
 
                     saleItems.Add(saleItem);
 
-                    // Update stock
+
                     product.QuantityInStock -= item.Quantity;
 
                     if (product.QuantityInStock <= product.ReorderLevel)

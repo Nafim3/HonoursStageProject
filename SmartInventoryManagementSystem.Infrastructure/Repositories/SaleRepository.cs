@@ -2,6 +2,7 @@
 using SmartInventoryManagementSystem.Application.DTO;
 using SmartInventoryManagementSystem.Application.DTO.SaleDTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
+using SmartInventoryManagementSystem.Domain.Models;
 using SmartInventoryManagementSystem.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
@@ -22,46 +23,25 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
             _currentUserService = currentUserService;
         }
 
-        public async Task <List <GetAllSales>> FetchAllSalesAsync()
+        public async Task <List <Sale>> FetchAllSalesAsync()
         {
             int userId = _currentUserService.UserId;
             return await _context.Sales
-                        .Where (sale => sale.UserId == userId)
-                        .Select (sale=> new GetAllSales
-                        {
-                            SaleId = sale.SaleId,
-                            
-                            SaleDate = sale.SaleDate,
-                            TotalAmount = sale.TotalAmount
-                        })
-                        .AsNoTracking()
-                        .ToListAsync();
+                .Include(s => s.SaleItems)
+                .ThenInclude(i => i.Product)
+                .Where(s => s.UserId == userId)
+                .ToListAsync();
         }
 
-        public async Task <GetByID?> FetchSaleByIdAsync(int saleId)
+        public async Task <Sale?> FetchSaleByIdAsync(int saleId)
         {
             int userId = _currentUserService.UserId;
             return await _context.Sales
-                        .Where(sale => sale.SaleId == saleId && sale.UserId == userId)
-                        .Select(sale => new GetByID
-                        {
-                            SaleId = sale.SaleId,
-                            SaleDate = sale.SaleDate,
-                            TotalAmount = sale.TotalAmount,
-                            BuyerName = sale.BuyerName,
-                            Items = sale.SaleItems
-                                        .Select(item => new SaleDetails
-                                        {
-                                            ProductId = item.ProductId,
-                                            ProductName = item.Product!.ProductName,
-                                            QuantitySold = item.Quantity,
-                                            ProductPrice = item.UnitPrice,
-                                            LineTotal =  item.LineTotal
-                                        })
-                                        .ToList()
-                        })
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync();
+                .Include(s => s.SaleItems)
+                .ThenInclude(i => i.Product)
+                .Where(s => s.SaleId == saleId && s.UserId == userId)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
         }
     }
 }

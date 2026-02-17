@@ -7,6 +7,7 @@ using SmartInventoryManagementSystem.Domain.Models;
 using SmartInventoryManagementSystem.Infrastructure.Persistence;
 using SmartInventoryManagementSystem.Infrastructure.Services;
 using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SmartInventoryManagementSystem.API.Controllers
 {
@@ -16,7 +17,7 @@ namespace SmartInventoryManagementSystem.API.Controllers
     public class ProductController : ControllerBase
     {
         
-        private readonly IProductRepository _productRepository; // used to access product data
+        private readonly IProductRepository _productRepository; 
         private readonly ICurrentUserService _currentUser;
             private readonly INotificationService _notificationService; 
         public ProductController(IProductRepository productRepository, ICurrentUserService currentUser, INotificationService notificationService)
@@ -66,7 +67,11 @@ namespace SmartInventoryManagementSystem.API.Controllers
                 UserId = _currentUser.UserId
             };
 
-            await _productRepository.AddProductAsync(product);
+
+            var error = await _productRepository.AddProductAsync(product);
+
+            if (error != null)
+                return BadRequest(error);
 
             return Ok();
         }
@@ -74,27 +79,30 @@ namespace SmartInventoryManagementSystem.API.Controllers
         [HttpPut("UpdateProduct/{id}")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] UpdateProductRequest dto)
         {
-            if (dto == null)
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
+
+            var product = new Product
             {
-                return BadRequest("Request body is null");
+                ProductId = id,
+                ProductName = dto.Name,
+                QuantityInStock = dto.Quantity,
+                ReorderLevel = dto.Reorder_Level,
+                ProductPrice = dto.Price,
+                ExpiryDate = dto.ExpiryDate
+            };
+
+            var error = await _productRepository.UpdateProductAsync(product);
+
+            if (error != null)
+            {
+                return ValidationProblem(new ValidationProblemDetails(
+                    new Dictionary<string, string[]>
+                    {
+                { "ExpiryDate", new[] { error } }
+                    }));
             }
-            
-            var existingProduct = await _productRepository.GetProductByIdAsync(id);
-            if (existingProduct == null || existingProduct.UserId != _currentUser.UserId)
-                return NotFound($"Product with ID {id} not found.");
 
-            // ---- server-side expiry check ----
-            if (dto.ExpiryDate.HasValue && dto.ExpiryDate.Value.Date < DateTime.Today)
-                return BadRequest("Expiry date cannot be in the past.");
-
-            existingProduct.ProductName = dto.Name;
-            existingProduct.QuantityInStock = dto.Quantity;
-            existingProduct.ReorderLevel = dto.ReorderLevel;
-            existingProduct.ProductPrice = dto.Price;
-            existingProduct.ExpiryDate = dto.ExpiryDate;
-
-
-            await _productRepository.UpdateProductAsync(existingProduct);
             return NoContent();
         }
 

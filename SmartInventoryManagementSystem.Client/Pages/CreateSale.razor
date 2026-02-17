@@ -7,10 +7,10 @@
 
 <div class="container py-4">
 
-    <!-- Title -->
+    
     <h3 class="fw-bold text-primary mb-4">Create Sale</h3>
 
-    <!-- Buyer Name -->
+    
     <div class="mb-4">
         <label class="form-label fw-semibold">Buyer Name</label>
         <InputText class="form-control" @bind-Value="buyerName" />
@@ -18,14 +18,14 @@
 
     <div class="row">
 
-        <!-- LEFT: Product Selection -->
+       
         <div class="col-md-6">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
 
                     <h5 class="text-primary fw-semibold mb-3">Select Product</h5>
 
-                    <!-- Product dropdown -->
+                    
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Product</label>
                         <InputSelect class="form-select" @bind-Value="selectedProductId">
@@ -39,15 +39,15 @@
                         </InputSelect>
                     </div>
 
-                    <!-- Quantity -->
+                   
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Quantity</label>
-                        <InputNumber TValue="int"
-                                     class="form-control"
-                                     @bind-Value="selectedQuantity" />
+                        <InputText class="form-control"
+                                   @bind-Value="selectedQuantityText"
+                                   @oninput="ValidateQuantity" />
                     </div>
 
-                    <!-- Add button -->
+                   
                     <button class="btn btn-outline-primary"
                             @onclick="AddSelectedProduct"
                             disabled="@(!CanAdd)">
@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <!-- RIGHT: Cart -->
+        
         <div class="col-md-6">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
@@ -91,13 +91,13 @@
                         {
                             <div class="d-flex justify-content-between align-items-center border-bottom py-3">
 
-                                <!-- Product name and price -->
+                                
                                 <div>
                                     <strong>@item.Name</strong>
                                     <div class="text-muted small">£@item.UnitPrice</div>
                                 </div>
 
-                                <!-- Quantity (editable) -->
+                               
                                 <div style="width: 80px;">
                                     <InputNumber TValue="int"
                                                  class="form-control form-control-sm"
@@ -106,12 +106,12 @@
                                                  ValueExpression="() => item.Quantity" />
                                 </div>
 
-                                <!-- Line total -->
+                                
                                 <div class="fw-semibold">
                                     £@(Math.Round(item.UnitPrice * item.Quantity, 2))
                                 </div>
 
-                                <!-- Remove button -->
+                                
                                 <button class="btn btn-sm btn-danger"
                                         @onclick="() => RemoveFromCart(item.ProductId)">
                                     <i class="bi bi-x-lg"></i>
@@ -148,7 +148,7 @@
 
 @code {
 
-    // DTOs for API request
+    
     public class CreateSaleRequest
     {
        
@@ -169,17 +169,26 @@
         public int ItemCount { get; set; }
     }
 
-
-
-
-
     private string buyerName = string.Empty;
 
-    private List<ProductListDto> products = new();   // Loaded from API later
-    private int? selectedProductId =0;              // Dropdown selection
-    private int selectedQuantity = 1;            // Quantity input
+    private List<ProductListDto> products = new();   
+    private int? selectedProductId =0;              
+    private int? selectedQuantity = 1;      
+    private string selectedQuantityText = "1";
 
+    private void ValidateQuantity(ChangeEventArgs e)
+    {
+        selectedQuantityText = e.Value?.ToString() ?? "";
 
+        if (int.TryParse(selectedQuantityText, out var value) && value > 0)
+        {
+            selectedQuantity = value;
+        }
+        else
+        {
+            selectedQuantity = null;
+        }
+    }
 
     public class CartItem
     {
@@ -206,11 +215,12 @@
         products = result ?? new List<ProductListDto>();
     }
 
-    // Validation for Add to Cart button
+    
     private bool CanAdd =>
         selectedProductId > 0 &&
-        selectedQuantity > 0 &&
-        selectedQuantity <= GetSelectedProductStock();
+    selectedQuantity.HasValue &&
+    selectedQuantity.Value > 0 &&
+    selectedQuantity.Value <= GetSelectedProductStock();
 
     private int GetSelectedProductStock()
     {
@@ -220,7 +230,8 @@
 
     private void AddSelectedProduct()
     {
-        if (!CanAdd)
+        
+        if (!selectedQuantity.HasValue || !CanAdd)
             return;
 
         var product = products.First(x => x.ProductId == selectedProductId);
@@ -229,21 +240,23 @@
 
         if (existing != null)
         {
-            // Increase quantity if already in cart
-            if (existing.Quantity + selectedQuantity <= existing.Stock)
+            
+            var qty = selectedQuantity.Value;
+
+            if (existing.Quantity + qty <= existing.Stock)
             {
-                existing.Quantity += selectedQuantity;
+                existing.Quantity += qty;
             }
             return;
         }
 
-        // Add new item
+        
         cart.Add(new CartItem
         {
             ProductId = product.ProductId,
             Name = product.Name ?? string.Empty,
             UnitPrice = product.Price,
-            Quantity = selectedQuantity,
+            Quantity = selectedQuantity.Value,  
             Stock = product.Quantity
         });
 
@@ -268,31 +281,31 @@
     {
         validationMessage = null;
 
-        // 1. Buyer name validation
+       
         if (string.IsNullOrWhiteSpace(buyerName) || buyerName.Length < 2)
         {
             validationMessage = "Buyer name must be at least 2 characters.";
             return;
         }
 
-        // 2. Cart must not be empty
+        
         if (!cart.Any())
         {
             validationMessage = "Cart cannot be empty.";
             return;
         }
 
-        // 3. Quantity validation
+       
         if (cart.Any(x => x.Quantity <= 0 || x.Quantity > x.Stock))
         {
             validationMessage = "One or more items have invalid quantities.";
             return;
         }
 
-        // 4. Build request that matches backend DTO
+        
         var request = new CreateSaleRequest
         {
-             // or your logged-in user ID
+             
             BuyerName = buyerName,
             Items = cart.Select(x => new CreateSaleItemRequest
             {
@@ -301,7 +314,7 @@
             }).ToList()
         };
 
-        // 5. POST to API
+       
         var response = await Http.PostAsJsonAsync("api/sales/CreateSale", request);
 
         if (!response.IsSuccessStatusCode)
@@ -310,15 +323,15 @@
             return;
         }
 
-        // 6. Read backend response
+      
         var result = await response.Content.ReadFromJsonAsync<CreateSaleResponse>();
 
         if (result != null)
         {
-            // 7. Success message
+          
             validationMessage = $"Sale completed. Total: £{result.TotalAmount}";
 
-            // Optional: clear cart + buyer name
+            
             cart.Clear();
             buyerName = "";
         }

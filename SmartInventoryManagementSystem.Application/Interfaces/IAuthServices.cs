@@ -10,8 +10,8 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
 {
     public interface IAuthServices
     {
-        Task<TokenResponse?> LoginUserAsync(AuthUserInfo luserInfoReq);
+        Task<TokenResponse?> LoginUserAsync(string identifier, string password);
         Task<TokenResponse?> RefreshTokenAsync(RefreshTokenRequest rtuserInfoReq);
-        Task<User?> RegisterUserAsync(AuthUserInfo ruserinfo);
+        Task<string?> RegisterUserAsync(string username, string email, string password);
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using SmartInventoryManagementSystem.Application.DTO.ProductDTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 using SmartInventoryManagementSystem.Domain.Models;
 using SmartInventoryManagementSystem.Infrastructure.Persistence;
@@ -27,19 +29,26 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
             {
                 throw new InvalidOperationException("There's no product in the table");
             }
-            // Eager loading Category and Sales related data
+            
             return await _context.Products
                 
-                .Where(p => p.UserId == _currentUser.UserId)
+                .Where(p => p.UserId == _currentUser.UserId && p.IsActive)
                 .AsNoTracking()
                 .ToListAsync();
         }
 
-        public async Task AddProductAsync(Product product)
+        public async Task <string?> AddProductAsync(Product product)
         {
+            if (product == null)
+                return "Product is null";
+
+            if (product.ExpiryDate <= DateTime.Today)
+                return "Expiry date must be in the future";
+
             product.UserId = _currentUser.UserId;
             await _context.Products.AddAsync(product);
            await _context.SaveChangesAsync();
+            return null;    
         }
 
         public async Task <Product?> GetProductByIdAsync(int id)
@@ -48,27 +57,65 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
         .AsNoTracking()
         .FirstOrDefaultAsync(p =>
             p.ProductId == id &&
-            p.UserId == _currentUser.UserId);
+            p.UserId == _currentUser.UserId &&
+            p.IsActive);
         }
 
-        public async Task UpdateProductAsync(Product product)
+        public async Task<string?> UpdateProductAsync(Product updated)
         {
-           _context.Products.Update(product);
-           await _context.SaveChangesAsync();
-        }
+            if (updated == null)
+                return "Product is null";
 
-        public async Task DeleteProductAsync(int id)
-        {
+            
             var product = await _context.Products
-         .FirstOrDefaultAsync(p =>
-             p.ProductId == id &&
-             p.UserId == _currentUser.UserId);
+                .FirstOrDefaultAsync(p => p.ProductId == updated.ProductId);
 
             if (product == null)
-                return;
+                return "Product not found";
 
-            _context.Products.Remove(product);
+            
+            if (updated.ExpiryDate <= DateTime.Today)
+                return "Expiry date must be in the future";
+
+            
+            product.ProductName = updated.ProductName;
+            product.QuantityInStock = updated.QuantityInStock;
+            product.ReorderLevel = updated.ReorderLevel;
+            product.ProductPrice = updated.ProductPrice;
+            product.ExpiryDate = updated.ExpiryDate;
+
             await _context.SaveChangesAsync();
+            return null;
+        }
+
+
+        public async Task<string?> DeleteProductAsync(int id)
+        {
+            var product = await _context.Products
+        .Include(p => p.SaleItems)
+        .FirstOrDefaultAsync(p =>
+            p.ProductId == id &&
+            p.UserId == _currentUser.UserId);
+
+            if (product == null)
+                return "Product not found";
+
+
+            if (product.SaleItems?.Any() == true)
+            {
+                
+                product.IsActive = false;
+            }
+
+            else
+            {
+
+                _context.Products.Remove(product);
+            }
+
+            await _context.SaveChangesAsync();
+            return null;
+
         }
         public async Task <List<Product>> GetLowStockProductsAsync(int userId)
         {

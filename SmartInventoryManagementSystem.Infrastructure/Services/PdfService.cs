@@ -23,17 +23,17 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
              _converter = converter;
         }
 
-        public async Task <byte[]> GenerateInvoicePdf(GetByID sale)
+        public async Task <byte[]> GenerateInvoicePdf(Sale sale)
         {
-            var html = BuildInvoice.Build(sale);
+            var html = BuildInvoice.BuildFromEntity(sale);
 
             var doc = new HtmlToPdfDocument
             {
                 GlobalSettings = new GlobalSettings
                 {
-            PaperSize = PaperKind.A4,
-            Orientation = Orientation.Portrait
-        },
+                    PaperSize = PaperKind.A4,
+                    Orientation = Orientation.Portrait
+                },
                 Objects =
         {
             new ObjectSettings

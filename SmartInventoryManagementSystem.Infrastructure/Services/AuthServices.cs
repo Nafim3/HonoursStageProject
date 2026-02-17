@@ -28,59 +28,54 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
             _context = context;
         }
 
-        public async Task<User?> RegisterUserAsync(AuthUserInfo ruserinfo)
+        public async Task<string?> RegisterUserAsync(string username, string email, string password)
         {
-            if (ruserinfo == null || string.IsNullOrWhiteSpace(ruserinfo.Password))
-            {
-                return null;
-            }
+            if (await _context.Users.AnyAsync(u => u.Email == email))
+                return "Email already exists";
 
-            if (await _context.Users.AnyAsync(u => u.Email == ruserinfo.Email || u.Username == ruserinfo.UserName))
-            {
-                return null; // User with the same email or username already exists
-            }
+            if (await _context.Users.AnyAsync(u => u.Username == username))
+                return "Username already exists";
 
             var user = new User
             {
-                Username = ruserinfo.UserName,
-                Email = ruserinfo.Email
+                Username = username,
+                Email = email
             };
 
-            user.PasswordHash = new PasswordHasher<User>().HashPassword(user, ruserinfo.Password);
+            user.PasswordHash =
+                new PasswordHasher<User>()
+                .HashPassword(user, password);
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
-            return user;
+
+            return null;
         }
 
-        public async Task<TokenResponse?> LoginUserAsync(AuthUserInfo luserInfoReq)
+        public async Task<TokenResponse?> LoginUserAsync(string identifier, string password)
         {
-            var identifier = luserInfoReq.UserName?.Trim(); // the input from login form
-
             var userInstance = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == identifier || u.Username == identifier);
+         .FirstOrDefaultAsync(u =>
+             u.Email == identifier ||
+             u.Username == identifier);
 
             if (userInstance == null)
-            {
-                return null; // User not found
-            }
+                return null;
 
-            // Ensure PasswordHash and provided password are not null
-            if (string.IsNullOrEmpty(userInstance.PasswordHash) || string.IsNullOrEmpty(luserInfoReq.Password))
-            {
-                return null; // Invalid password or password hash
-            }
+            var result = new PasswordHasher<User>()
+                .VerifyHashedPassword(
+                    userInstance,
+                    userInstance.PasswordHash,
+                    password);
 
-            if (new PasswordHasher<User>().VerifyHashedPassword(userInstance, userInstance.PasswordHash, luserInfoReq.Password) == PasswordVerificationResult.Failed)
-            {
-                return null; // Invalid password
-            }
-            var GenToken = new TokenResponse
+            if (result == PasswordVerificationResult.Failed)
+                return null;
+
+            return new TokenResponse
             {
                 AccessToken = GenerateToken(userInstance),
                 RefreshToken = await GenerateRefreshToken(userInstance)
             };
-            return GenToken;
         }
 
         private async Task <string> GenerateRefreshToken(User RTuser)

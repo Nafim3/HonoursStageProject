@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace SmartInventoryManagementSystem.Application.DTO.AuthDTO
 {
-    public class AuthUserInfo
+    public class LoginUser
     {
-        [Required]
-        public string? UserName { get; set;}
-       
-        public string? Email { get; set; }        
-        [Required]
+        [Required(ErrorMessage = "Username or Email is required")]
+        public string? Identifier { get; set;}
+          
+        [Required(ErrorMessage = "Password is required")]
         public string? Password { get; set; }
     }
 }

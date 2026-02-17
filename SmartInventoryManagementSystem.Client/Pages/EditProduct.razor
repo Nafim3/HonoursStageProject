@@ -8,7 +8,7 @@
 
 <div class="container py-4">
 
-    <!-- Header -->
+    
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold text-primary">Edit Product</h3>
 
@@ -52,7 +52,7 @@
 
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold">Reorder Level</label>
-                            <InputNumber class="form-control" @bind-Value="product.ReorderLevel" />
+                            <InputNumber class="form-control" @bind-Value="product.Reorder_Level" />
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -139,10 +139,25 @@
             NavigationManager.NavigateTo("/products");
             return;
         }
-        var apiMessage = await response.Content.ReadAsStringAsync(); errorMessage = string.IsNullOrWhiteSpace(apiMessage) 
-        ? "Failed to save changes. Try again."
-        : apiMessage;
 
+        // Deserialize structured API errors
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblem>();
+
+        if (problem?.Errors != null && problem.Errors.Any())
+        {
+            errorMessage = string.Join(" | ",
+                problem.Errors.SelectMany(e => e.Value));
+        }
+        else
+        {
+            errorMessage = "Failed to save changes. Try again.";
+        }
+
+    }
+
+    public class ValidationProblem
+    {
+        public Dictionary<string, string[]>? Errors { get; set; }
     }
 
     private void GoBack()

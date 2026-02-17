@@ -12,12 +12,8 @@ namespace SmartInventoryManagementSystem.Domain.Models
         public int Quantity {  get; set; }
         public decimal UnitPrice { get; set; }
         public decimal LineTotal { get; set; }
-
-        // FKs
         public int ProductId { get; set; }
         public int SaleId { get; set; }
-
-        // Navigation properties
         public Product? Product { get; set; }
         public Sale? Sale { get; set; }
     }

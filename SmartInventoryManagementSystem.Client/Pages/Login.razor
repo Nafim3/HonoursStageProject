@@ -24,22 +24,23 @@
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
-                <!-- Username -->
+               
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Username or Email</label>
                     <InputText class="form-control"
-                               @bind-Value="loginModel.UserName" />
+                               @bind-Value="loginModel.Identifier" />
                 </div>
 
-                <!-- Password -->
+                
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Password</label>
                     <InputText class="form-control"
                                type="password"
                                @bind-Value="loginModel.Password" />
+                   
                 </div>
 
-                <!-- Login Button -->
+               
                 <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
                     <i class="bi bi-box-arrow-in-right me-1"></i> Login
                 </button>
@@ -66,7 +67,7 @@
 
     private string? ErrorMessage;
 
-    private AuthUserInfo loginModel = new();
+    private LoginUser loginModel = new();
 
     private async Task HandleLogin()
     {
@@ -89,12 +90,8 @@
             return;
         }
            
-
-        // persist token and notify auth state provider (stores token in localStorage)
         await AuthStateProvider.NotifyUserAuthentication(tokenData.AccessToken);
-
-        
-
+      
         Nav.NavigateTo("/dashboard", true);
     }
 }

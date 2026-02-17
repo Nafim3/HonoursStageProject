@@ -17,19 +17,19 @@
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
-                <!-- Username -->
+               
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Username</label>
                     <InputText class="form-control" @bind-Value="registerModel.UserName" />
                 </div>
 
-                <!-- Email -->
+                
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Email</label>
                     <InputText class="form-control" @bind-Value="registerModel.Email" />
                 </div>
 
-                <!-- Password -->
+              
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Password</label>
                     <InputText class="form-control"
@@ -37,7 +37,15 @@
                                @bind-Value="registerModel.Password" />
                 </div>
 
-                <!-- Register Button -->
+               
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Confirm Password</label>
+                    <InputText class="form-control"
+                               type="password"
+                               @bind-Value="registerModel.ConfirmPassword" />
+                </div>
+
+               
                 <button class="btn btn-primary w-100 py-2 fw-semibold" type="submit">
                     <i class="bi bi-person-plus me-1"></i> Register
                 </button>
@@ -63,8 +71,9 @@
 </div>
 
 
-@code {
-    private AuthUserInfo registerModel = new();
+@code 
+{
+    private RegisterUser registerModel = new();
     private string? message;
 
     private async Task HandleRegister()
@@ -79,7 +88,10 @@
         }
         else
         {
-            message = "User already exists or invalid data";
+            var error = await response.Content.ReadAsStringAsync();
+            message = string.IsNullOrWhiteSpace(error)
+                ? "Registration failed"
+                : error;
         }
     }
 }

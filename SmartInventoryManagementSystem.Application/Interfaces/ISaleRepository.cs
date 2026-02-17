@@ -1,4 +1,5 @@
 ﻿using SmartInventoryManagementSystem.Application.DTO.SaleDTO;
+using SmartInventoryManagementSystem.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
 {
     public interface ISaleRepository
     {
-       Task <List<GetAllSales>> FetchAllSalesAsync();
-       Task <GetByID?> FetchSaleByIdAsync(int saleId);
+       Task<List<Sale>> FetchAllSalesAsync();
+       Task<Sale?> FetchSaleByIdAsync(int saleId);
     }
 }

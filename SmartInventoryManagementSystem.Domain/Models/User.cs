@@ -11,11 +11,9 @@ namespace SmartInventoryManagementSystem.Domain.Models
         public int UserId { get; set; }
         public string? Username { get; set; }
         public string? Email { get; set; }
-        public string? PasswordHash { get; set; }
+        public string PasswordHash { get; set; } = null!;
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryDate { get; set; }
-
-        // One-to-many: one user can have many sales
         public ICollection<Sale>? Sales { get; set; }
     }
 }

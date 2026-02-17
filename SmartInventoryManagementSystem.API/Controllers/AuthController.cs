@@ -19,19 +19,22 @@ namespace SmartInventoryManagementSystem.API.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(AuthUserInfo dto)
+        public async Task<IActionResult> Register(RegisterUser dto)
         {
-            var userInstance = await _authService.RegisterUserAsync(dto);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var userInstance = await _authService.RegisterUserAsync(dto.UserName!, dto.Email!, dto.Password!);
             if (userInstance == null)
-                return BadRequest("Username already exists");
+                return BadRequest(userInstance);
 
             return Ok();
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(AuthUserInfo dto)
+        public async Task<IActionResult> Login(LoginUser dto)
         {
-            var Token = await _authService.LoginUserAsync(dto);
+            var Token = await _authService.LoginUserAsync(dto.Identifier!, dto.Password!);
             if (Token == null)
                 return Unauthorized();
 
