@@ -9,7 +9,7 @@ namespace SmartInventoryManagementSystem.Application.DTO.AuthDTO
 {
     public class LoginUser
     {
-        [Required(ErrorMessage = "Username or Email is required")]
+        [Required(ErrorMessage = " Either Username or Email is required")]
         public string? Identifier { get; set;}
           
         [Required(ErrorMessage = "Password is required")]
