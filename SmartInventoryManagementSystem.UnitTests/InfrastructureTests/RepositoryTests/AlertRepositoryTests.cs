@@ -51,7 +51,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         {
             // Arrange
             var context = GetInMemoryDbContext();
-            var repository = new AlertRepository(context);
+            var Arepository = new AlertRepository(context);
 
             var alert1 = new Alert { UserId = 1, Category = "Stock", Message = "Alert 1", CreatedAt = DateTime.UtcNow.AddMinutes(-5) };
             var alert2 = new Alert { UserId = 1, Category = "Stock", Message = "Alert 2", CreatedAt = DateTime.UtcNow };
@@ -61,7 +61,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
             await context.SaveChangesAsync();
 
             // Act
-            var recentAlerts = await repository.GetRecentAsync(userId: 1, category: "Stock", limit: 2);
+            var recentAlerts = await Arepository.GetRecentAsync(userId: 1, category: "Stock", limit: 2);
 
             // Assert
             recentAlerts.Count.Should().Be(2);
@@ -73,7 +73,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         public async Task ExistAsync_ShouldReturnTrue_WhenAlertExists()
         {
             var context = GetInMemoryDbContext();
-            var repository = new AlertRepository(context);
+            var Arepository = new AlertRepository(context);
 
             var alert = new Alert
             {
@@ -86,7 +86,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
             context.Alerts.Add(alert);
             await context.SaveChangesAsync();
 
-            var exists = await repository.ExistAsync(1, "Stock", 4);
+            var exists = await Arepository.ExistAsync(1, "Stock", 4);
             exists.Should().BeTrue();
         }
 
@@ -94,7 +94,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         public async Task ExistAsync_ShouldReturnFalse_WhenAlertDoesNotExist()
         {
             var context = GetInMemoryDbContext();
-            var repository = new AlertRepository(context);
+            var Arepository = new AlertRepository(context);
             var alert = new Alert
             {
                 UserId = 1,
@@ -105,7 +105,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
             };
             context.Alerts.Add(alert);
             await context.SaveChangesAsync();
-            var exists = await repository.ExistAsync(1, "Stock", 5);
+            var exists = await Arepository.ExistAsync(1, "Stock", 5);
             exists.Should().BeFalse();
         }
 
@@ -113,7 +113,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         public async Task CountAsync_ShouldReturnCorrectCount()
         {
             var context = GetInMemoryDbContext();
-            var repository = new AlertRepository(context);
+            var Arepository = new AlertRepository(context);
             context.Alerts.AddRange
             (
                 new Alert { UserId = 1, Category = "Stock", Message = "Alert 1", CreatedAt = DateTime.UtcNow },
@@ -122,7 +122,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
                 new Alert { UserId = 2, Category = "Stock", Message = "Alert 4", CreatedAt = DateTime.UtcNow }
             );
             await context.SaveChangesAsync();
-            var count = await repository.CountAsync(1, "Stock");
+            var count = await Arepository.CountAsync(1, "Stock");
             count.Should().Be(2);
         }
 
@@ -130,7 +130,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         public async Task GetByIdAsync_ShouldReturnCorrectAlert()
         {
             var context = GetInMemoryDbContext();
-            var repository = new AlertRepository(context);
+            var Arepository = new AlertRepository(context);
             var alert = new Alert
             {
                 UserId = 12,
@@ -141,7 +141,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
             };
             context.Alerts.Add(alert);
             await context.SaveChangesAsync();
-            var retrievedAlert = await repository.GetByIdAsync(alert.Id);
+            var retrievedAlert = await Arepository.GetByIdAsync(alert.Id);
             retrievedAlert.Should().NotBeNull();
             retrievedAlert!.Message.Should().Be("Alert 1");
         }
@@ -150,8 +150,8 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         public async Task GetByIdAsync_ShouldReturnNull_WhenAlertDoesNotExist()
         {
             var context = GetInMemoryDbContext();
-            var repository = new AlertRepository(context);
-            var retrievedAlert = await repository.GetByIdAsync(999);
+            var Arepository = new AlertRepository(context);
+            var retrievedAlert = await Arepository.GetByIdAsync(999);
             retrievedAlert.Should().BeNull();
         }
 
@@ -159,8 +159,8 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         public async Task GetRecentAsync_ShouldReturnEmptyList_WhenNoAlerts()
         {
             var context = GetInMemoryDbContext();
-            var repository = new AlertRepository(context);
-            var recentAlerts = await repository.GetRecentAsync(1, "Stock", 5);
+            var Arepository = new AlertRepository(context);
+            var recentAlerts = await Arepository.GetRecentAsync(1, "Stock", 5);
             recentAlerts.Should().BeEmpty();
         }
 
@@ -168,7 +168,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         public async Task DeleteAsync_Should_RemoveAlertFromDatabase()
         {
             var context = GetInMemoryDbContext();
-            var repository = new AlertRepository(context);
+            var Arepository = new AlertRepository(context);
             var alert = new Alert
             {
                 UserId = 1,
@@ -192,7 +192,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         public async Task GetAllForUserAsync_ShouldReturnAlertsForUser()
         {
             var context = GetInMemoryDbContext();
-            var repository = new AlertRepository(context);
+            var Arepository = new AlertRepository(context);
             context.Alerts.AddRange
             (
                 new Alert { UserId = 1, Category = "Stock", Message = "Alert 1", CreatedAt = DateTime.UtcNow },
@@ -201,7 +201,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
                 new Alert { UserId = 2, Category = "Expired", Message = "Alert 4", CreatedAt = DateTime.UtcNow }
             );
             await context.SaveChangesAsync();
-            var user1Alerts = await repository.GetAllForUserAsync(2);
+            var user1Alerts = await Arepository.GetAllForUserAsync(2);
             user1Alerts.Count.Should().Be(2);
             user1Alerts[0].Message.Should().Be("Alert 4");
             user1Alerts[1].Message.Should().Be("Alert 3");
@@ -211,7 +211,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         public async Task GetRecentAsync_ShouldReturnMostRecentAlerts()
         {
             var context = GetInMemoryDbContext();
-            var repository = new AlertRepository(context);
+            var Arepository = new AlertRepository(context);
 
             var older = new Alert
             {
@@ -240,10 +240,10 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
             context.Alerts.AddRange(older, middle, newest);
             await context.SaveChangesAsync();
 
-            var result = await repository.GetRecentAsync(1, "Stock", 2);
+            var result = await Arepository.GetRecentAsync(1, "Stock", 2);
 
             result.Count.Should().Be(2);
-            result[0].Message.Should().Be("New Alert");     // newest first
+            result[0].Message.Should().Be("New Alert");     // newest
             result[1].Message.Should().Be("Middle Alert");  // second newest
         }
 
@@ -251,7 +251,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         public async Task DeleteAsync_ShouldRemoveAlert()
         {
             var context = GetInMemoryDbContext();
-            var repository = new AlertRepository(context);
+            var Arepository = new AlertRepository(context);
 
             var alert = new Alert
             {
@@ -265,7 +265,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
             await context.SaveChangesAsync();
 
             // Act
-            await repository.DeleteAsync(alert);
+            await Arepository.DeleteAsync(alert);
 
             // Assert
             var exists = await context.Alerts.AnyAsync(a => a.Id == alert.Id);

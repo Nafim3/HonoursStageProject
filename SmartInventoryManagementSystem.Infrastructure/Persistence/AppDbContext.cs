@@ -28,8 +28,6 @@ namespace SmartInventoryManagementSystem.Infrastructure.Persistence
             modelBuilder.Entity<User>().ToTable("Users");
             modelBuilder.Entity<SaleItem>().ToTable("SaleItems");
             modelBuilder.Entity<Alert>().ToTable("Alerts");
-
-
             base.OnModelCreating(modelBuilder);
         }
     }

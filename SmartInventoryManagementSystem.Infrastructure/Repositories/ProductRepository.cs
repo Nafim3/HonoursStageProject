@@ -16,6 +16,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
     {
         private readonly AppDbContext _context;
         private readonly ICurrentUserService _currentUser;
+        
         public ProductRepository (AppDbContext context, ICurrentUserService currentUser)
         {
             _context = context;
@@ -37,7 +38,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task <string?> AddProductAsync(Product product)
+        public async Task <string?> AddProductAsync(Product? product)
         {
             if (product == null)
                 return "Product is null";
@@ -58,10 +59,11 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
         .FirstOrDefaultAsync(p =>
             p.ProductId == id &&
             p.UserId == _currentUser.UserId &&
-            p.IsActive);
+            p.IsActive
+            );
         }
 
-        public async Task<string?> UpdateProductAsync(Product updated)
+        public async Task<string?> UpdateProductAsync(Product? updated)
         {
             if (updated == null)
                 return "Product is null";
