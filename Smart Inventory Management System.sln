@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartInventoryManagementSys
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartInventoryManagementSystem.UnitTests", "SmartInventoryManagementSystem.UnitTests\SmartInventoryManagementSystem.UnitTests.csproj", "{3B09935F-8E83-40A2-A820-8AA409D43C10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartInventoryManagementSystem.IntegrationTests", "SmartInventoryManagementSystem.ApiTests\SmartInventoryManagementSystem.IntegrationTests.csproj", "{54A7F49C-BC33-4184-8019-CEEAA56E5247}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartInventoryManagementSystem.IntegrationTests", "SmartInventoryManagementSystem.IntegrationTests\SmartInventoryManagementSystem.IntegrationTests.csproj", "{98E9BB85-3B47-0F81-6A20-9C007B2A08AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,10 +50,10 @@ Global
 		{3B09935F-8E83-40A2-A820-8AA409D43C10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B09935F-8E83-40A2-A820-8AA409D43C10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B09935F-8E83-40A2-A820-8AA409D43C10}.Release|Any CPU.Build.0 = Release|Any CPU
-		{54A7F49C-BC33-4184-8019-CEEAA56E5247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{54A7F49C-BC33-4184-8019-CEEAA56E5247}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{54A7F49C-BC33-4184-8019-CEEAA56E5247}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{54A7F49C-BC33-4184-8019-CEEAA56E5247}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98E9BB85-3B47-0F81-6A20-9C007B2A08AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98E9BB85-3B47-0F81-6A20-9C007B2A08AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98E9BB85-3B47-0F81-6A20-9C007B2A08AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98E9BB85-3B47-0F81-6A20-9C007B2A08AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
