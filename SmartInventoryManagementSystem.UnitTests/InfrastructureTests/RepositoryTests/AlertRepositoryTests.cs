@@ -151,7 +151,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         {
             var context = GetInMemoryDbContext();
             var Arepository = new AlertRepository(context);
-            var retrievedAlert = await Arepository.GetByIdAsync(999);
+            var retrievedAlert = await Arepository.GetByIdAsync(877);
             retrievedAlert.Should().BeNull();
         }
 

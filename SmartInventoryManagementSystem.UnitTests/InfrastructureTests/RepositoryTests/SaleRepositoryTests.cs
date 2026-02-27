@@ -26,7 +26,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         [Fact]
         public async Task FetchAllSalesAsync_ReturnsSalesForCurrentUser()
         {
-            // Arrange
+
             var context = GetInMemoryDbContext();
             var currentUserMock = new Mock<ICurrentUserService>();
             currentUserMock.Setup(x => x.UserId).Returns(5);

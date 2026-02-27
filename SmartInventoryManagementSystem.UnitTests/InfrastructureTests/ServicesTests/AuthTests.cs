@@ -79,14 +79,16 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
 
             var result = await service.RegisterUserAsync("newUser", "new@example.com", "password123");
 
-            result.Should().BeNull(); // success
+            result.Should().NotBeNull(); // success returns userId string
+            int.Parse(result!).Should().BeGreaterThan(0);
 
             var createdUser = await context.Users.FirstOrDefaultAsync(u => u.Email == "new@example.com");
 
             createdUser.Should().NotBeNull();
             createdUser!.Username.Should().Be("newUser");
             createdUser.PasswordHash.Should().NotBeNullOrEmpty();
-            createdUser.PasswordHash.Should().NotBe("password123"); // ensure hashing happened
+            createdUser.PasswordHash.Should().NotBe("password123");
+
         }
 
 
@@ -287,7 +289,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
 
             var request = new RefreshTokenRequest
             {
-                UserId = 999,
+                UserId = 478,
                 RefreshToken = "anything"
             };
 
@@ -429,7 +431,6 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
             result!.AccessToken.Should().NotBeNullOrEmpty();
             result.RefreshToken.Should().NotBeNullOrEmpty();
 
-            // Ensure refresh token was updated in DB
             var updatedUser = await context.Users.FindAsync(1);
             updatedUser!.RefreshToken.Should().Be(result.RefreshToken);
         }

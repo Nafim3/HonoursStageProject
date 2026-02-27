@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using SmartInventoryManagementSystem.Application.DTO.SaleDTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 using SmartInventoryManagementSystem.Domain.Models;
@@ -16,32 +17,83 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
         private readonly AppDbContext _context;
         private readonly ICurrentUserService _currentUserService;
         private readonly INotificationService _notificationService;
+        private readonly bool _disableTransactions;
+
+        // Production constructor (used by ASP.NET Core DI)
         public SaleService(AppDbContext context, ICurrentUserService currentUser, INotificationService notificationService)
         {
             _context = context;
             _currentUserService = currentUser;
             _notificationService = notificationService;
+            _disableTransactions = false;
+        }
+
+        // Test constructor (used only in unit tests)
+        public SaleService(AppDbContext context, ICurrentUserService currentUser, INotificationService notificationService, bool disableTransactions)
+        {
+            _context = context;
+            _currentUserService = currentUser;
+            _notificationService = notificationService;
+            _disableTransactions = disableTransactions;
         }
 
         public async Task<CreateSaleResponse> CreateSaleAsync(CreateSaleRequest request)
         {
+           
+            if (request.Items == null || !request.Items.Any())
+                throw new ArgumentException("Sale must contain at least one item");
+
+            var duplicateProduct = request.Items
+                .GroupBy(i => i.ProductId)
+                .FirstOrDefault(g => g.Count() > 1);
+
+            if (duplicateProduct != null)
+                throw new ArgumentException($"Product {duplicateProduct.Key} appears multiple times in the sale");
+
+            foreach (var item in request.Items)
+            {
+                if (item.Quantity <= 0)
+                    throw new ArgumentException("Quantity must be greater than zero");
+            }
+
+            
+
             var currentUserId = _currentUserService.UserId;
-            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            var productIds = request.Items.Select(i => i.ProductId).ToList();
+
+            var products = await _context.Products
+                .Where(p => p.UserId == currentUserId && productIds.Contains(p.ProductId))
+                .ToListAsync();
+
+            foreach (var item in request.Items)
+            {
+                var product = products.FirstOrDefault(p => p.ProductId == item.ProductId);
+
+                if (product == null)
+                    throw new Exception($"Product with ID {item.ProductId} not found");
+
+                if (product.ExpiryDate <= DateTime.UtcNow)
+                    throw new Exception($"Product {product.ProductName} is expired and cannot be sold");
+
+
+
+                if (product.QuantityInStock < item.Quantity)
+                    throw new Exception($"Not enough stock for product {product.ProductName}");
+            }
+
+            
+
+            IDbContextTransaction? transaction = null;
+
+            if (!_disableTransactions)
+            {
+                transaction = await _context.Database.BeginTransactionAsync();
+            }
 
             try
             {
-
-                if (request.Items == null || !request.Items.Any())
-                    throw new ArgumentException("Sale must contain at least one item.");
-
-
-                var duplicateProduct = request.Items
-                    .GroupBy(i => i.ProductId)
-                    .FirstOrDefault(g => g.Count() > 1);
-
-                if (duplicateProduct != null)
-                    throw new ArgumentException($"Product {duplicateProduct.Key} appears multiple times in the sale.");
-
+               
 
                 var sale = new Sale
                 {
@@ -56,26 +108,13 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
 
                 var saleItems = new List<SaleItem>();
 
+             
+
                 foreach (var item in request.Items)
                 {
-                    if (item.Quantity <= 0)
-                        throw new ArgumentException("Quantity must be greater than zero.");
-
-
-                    var product = await _context.Products
-                              .FirstOrDefaultAsync(p =>
-                              p.ProductId == item.ProductId &&
-                              p.UserId == currentUserId);
-
-
-                    if (product == null)
-                        throw new Exception($"Product with ID {item.ProductId} not found.");
-
-                    if (product.QuantityInStock < item.Quantity)
-                        throw new Exception($"Not enough stock for product {product.ProductName}.");
+                    var product = products.First(p => p.ProductId == item.ProductId);
 
                     var lineTotal = product.ProductPrice * item.Quantity;
-
 
                     var saleItem = new SaleItem
                     {
@@ -88,22 +127,28 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
 
                     saleItems.Add(saleItem);
 
-
+                  
                     product.QuantityInStock -= item.Quantity;
 
+                   
                     if (product.QuantityInStock <= product.ReorderLevel)
                     {
                         await _notificationService.NotifyLowStockAsync(product, currentUserId);
                     }
-
                 }
+
+               
 
                 await _context.SaleItems.AddRangeAsync(saleItems);
 
                 sale.TotalAmount = saleItems.Sum(si => si.LineTotal);
 
                 await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+
+              
+
+                if (transaction != null)
+                    await transaction.CommitAsync();
 
                 return new CreateSaleResponse
                 {
@@ -114,9 +159,15 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
             }
             catch
             {
-                await transaction.RollbackAsync();
+                if (transaction != null)
+                    await transaction.RollbackAsync();
+
                 throw;
             }
+
+
+
+
         }
 
     }

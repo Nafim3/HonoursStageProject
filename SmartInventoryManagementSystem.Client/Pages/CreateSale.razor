@@ -319,9 +319,21 @@
 
         if (!response.IsSuccessStatusCode)
         {
-            validationMessage = "Failed to submit sale. Please try again.";
+            var errorJson = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+
+            if (errorJson != null && errorJson.TryGetValue("msg", out var message))
+            {
+                validationMessage = message;
+            }
+            else
+            {
+                validationMessage = "Failed to submit sale.";
+            }
+
             return;
+
         }
+
 
       
         var result = await response.Content.ReadFromJsonAsync<CreateSaleResponse>();

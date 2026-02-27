@@ -49,7 +49,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
-            return null;
+            return user.UserId.ToString();
         }
 
         public async Task<TokenResponse?> LoginUserAsync(string identifier, string password)

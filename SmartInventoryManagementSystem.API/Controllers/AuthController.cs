@@ -21,14 +21,13 @@ namespace SmartInventoryManagementSystem.API.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterUser dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var result = await _authService.RegisterUserAsync(dto.UserName!, dto.Email!, dto.Password!);
 
-            var userInstance = await _authService.RegisterUserAsync(dto.UserName!, dto.Email!, dto.Password!);
-            if (userInstance == null)
-                return BadRequest(userInstance);
+            if (result == "Email already exists" || result == "Username already exists")
+                return BadRequest(new { message = result });
 
-            return Ok();
+            return Ok(new { message = "Registration successful" });
+
         }
 
         [HttpPost("login")]
@@ -44,6 +43,9 @@ namespace SmartInventoryManagementSystem.API.Controllers
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh(RefreshTokenRequest dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var TokenGen = await _authService.RefreshTokenAsync(dto);
             if (TokenGen == null)
                 return Unauthorized();

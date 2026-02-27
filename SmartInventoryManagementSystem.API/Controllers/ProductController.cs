@@ -19,7 +19,8 @@ namespace SmartInventoryManagementSystem.API.Controllers
         
         private readonly IProductRepository _productRepository; 
         private readonly ICurrentUserService _currentUser;
-            private readonly INotificationService _notificationService; 
+        private readonly INotificationService _notificationService; 
+        
         public ProductController(IProductRepository productRepository, ICurrentUserService currentUser, INotificationService notificationService)
         {
             _productRepository = productRepository;

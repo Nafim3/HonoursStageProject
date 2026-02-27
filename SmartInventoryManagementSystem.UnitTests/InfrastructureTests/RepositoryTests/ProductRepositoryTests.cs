@@ -339,7 +339,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
 
             var Prepository = new ProductRepository(context, currentUserMock.Object);
 
-            var result = await Prepository.DeleteProductAsync(999);
+            var result = await Prepository.DeleteProductAsync(1298);
 
             result.Should().Be("Product not found");
         }

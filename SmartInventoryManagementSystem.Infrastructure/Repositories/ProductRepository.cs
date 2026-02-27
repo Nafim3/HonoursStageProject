@@ -119,6 +119,8 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
             return null;
 
         }
+
+
         public async Task <List<Product>> GetLowStockProductsAsync(int userId)
         {
             return await _context.Products

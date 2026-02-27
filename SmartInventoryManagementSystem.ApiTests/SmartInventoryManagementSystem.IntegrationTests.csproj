@@ -5,11 +5,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+	<ShadowCopy>false</ShadowCopy>
+
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
     <PackageReference Include="FluentAssertions" Version="8.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
@@ -18,13 +21,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SmartInventoryManagementSystem.Application\SmartInventoryManagementSystem.Application.csproj" />
-    <ProjectReference Include="..\SmartInventoryManagementSystem.Domain\SmartInventoryManagementSystem.Domain.csproj" />
-    <ProjectReference Include="..\SmartInventoryManagementSystem.Infrastructure\SmartInventoryManagementSystem.Infrastructure.csproj" />
+    <Using Include="Xunit" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Xunit" />
+    <ProjectReference Include="..\SmartInventoryManagementSystem.API\SmartInventoryManagementSystem.API.csproj" />
+    <ProjectReference Include="..\SmartInventoryManagementSystem.Application\SmartInventoryManagementSystem.Application.csproj" />
+    <ProjectReference Include="..\SmartInventoryManagementSystem.Infrastructure\SmartInventoryManagementSystem.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
