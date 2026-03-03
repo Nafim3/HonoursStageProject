@@ -22,19 +22,24 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
         }
         public async Task <List<SalesAnalysis>> GetSalesAnalysisAsync()
         {
+
             var userId = _currentUserService.UserId;
+
             return await _context.Sales
-                .Where(s => s.UserId == userId)
-                .GroupBy(s => new { s.SaleDate.Year, s.SaleDate.Month })
-                .Select(g => new SalesAnalysis
-                {
-                    Year = g.Key.Year,
-                    Month = g.Key.Month,
-                    Revenue = g.Sum(s => s.TotalAmount)
-                })
-                .OrderBy(x => x.Year)
-                .ThenBy(x => x.Month)
-                .ToListAsync();
+            .Where(s => s.UserId == userId)
+            .GroupBy(s => new { s.SaleDate.Year, s.SaleDate.Month })
+            .Select(g => new SalesAnalysis
+    
+            {
+                Year = g.Key.Year,
+                Month = g.Key.Month,
+                Revenue = g.Sum(s => s.TotalAmount)
+            })
+                
+            .OrderByDescending(x => x.Year)
+            .ThenByDescending(x => x.Month)
+            .ToListAsync();
+
         }
     }
 }

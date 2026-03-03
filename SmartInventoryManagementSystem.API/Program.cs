@@ -24,9 +24,6 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-//builder.Services.AddDbContext<AppDbContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 
 if (!builder.Environment.IsEnvironment("Testing"))
 {
@@ -57,6 +54,7 @@ builder.Services.AddScoped<IAlertRepository, AlertRepository>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IAuthServices, AuthServices>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<IStockPredictionService, StockPredictionService>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<IConverter>(

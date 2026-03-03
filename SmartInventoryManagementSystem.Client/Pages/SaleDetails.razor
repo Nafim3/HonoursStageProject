@@ -71,7 +71,7 @@ else
                         <tr>
                             <th>Product</th>
                             <th class="text-center">Quantity</th>
-                            <th class="text-end">Unit Price</th>
+                            <th class="text-center">Unit Price</th>
                             <th class="text-end">Total</th>
                         </tr>
                     </thead>
@@ -82,7 +82,7 @@ else
                             <tr>
                                 <td>@item.ProductName</td>
                                 <td class="text-center">@item.QuantitySold</td>
-                                <td class="text-end">£@item.ProductPrice</td>
+                                <td class="text-center">£@item.ProductPrice</td>
                                 <td class="text-end fw-semibold">
                                     £@(item.ProductPrice* item.QuantitySold)
                                 </td>
