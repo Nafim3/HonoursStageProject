@@ -42,7 +42,7 @@ namespace SmartInventoryManagementSystem.ApiTests.AnalyticsEndpoints
             {
                 builder.ConfigureServices(services =>
                 {
-                    // This removes the fake auth handler
+                    // removes the fake auth handler
                     services.RemoveAll<IAuthenticationSchemeProvider>();
                     services.RemoveAll<IAuthenticationHandlerProvider>();
 

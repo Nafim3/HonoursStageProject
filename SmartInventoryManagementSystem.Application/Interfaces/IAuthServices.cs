@@ -13,5 +13,6 @@ namespace SmartInventoryManagementSystem.Application.Interfaces
         Task<TokenResponse?> LoginUserAsync(string identifier, string password);
         Task<TokenResponse?> RefreshTokenAsync(RefreshTokenRequest rtuserInfoReq);
         Task<string?> RegisterUserAsync(string username, string email, string password);
+        Task<string> SoftDeleteUserAsync(int userId, string password);
     }
 }

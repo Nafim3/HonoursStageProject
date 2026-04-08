@@ -59,6 +59,7 @@ namespace SmartInventoryManagementSystem.Client.Authentication
         public async Task NotifyUserLogout()
         {
             await _localStorage.RemoveItemAsync("accessToken");
+            await _localStorage.RemoveItemAsync("refreshToken");
             NotifyAuthenticationStateChanged(Task.FromResult(_anonymous));
         }
 

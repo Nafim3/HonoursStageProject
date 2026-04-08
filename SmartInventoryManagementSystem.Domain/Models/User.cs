@@ -14,6 +14,8 @@ namespace SmartInventoryManagementSystem.Domain.Models
         public string PasswordHash { get; set; } = null!;
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryDate { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
         public ICollection<Sale>? Sales { get; set; }
     }
 }

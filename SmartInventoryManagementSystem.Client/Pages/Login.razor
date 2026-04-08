@@ -18,6 +18,12 @@
                 <div class="alert alert-danger text-center mb-3">
                     @ErrorMessage
                 </div>
+
+                <small class="text-muted">
+                    If you are sure your credentials are correct, then your account may have been deactivated. Contact the developer to reactivate your account.
+                    <br><br><br>
+                </small>
+
             }
 
             <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
@@ -81,8 +87,7 @@
             return;
         }
 
-        var tokenData =
-            await response.Content.ReadFromJsonAsync<TokenResponse>();
+        var tokenData = await response.Content.ReadFromJsonAsync<TokenResponse>();
 
         if (tokenData?.AccessToken is null)
         { 

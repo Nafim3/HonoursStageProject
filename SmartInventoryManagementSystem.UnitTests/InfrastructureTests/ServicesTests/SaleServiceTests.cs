@@ -368,7 +368,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
             db.Products.Add(new Product
             {
                 ProductId = 10,
-                UserId = 67, // belongs to someone else
+                UserId = 67,
                 ProductName = "Keyboard",
                 QuantityInStock = 10,
                 ProductPrice = 50

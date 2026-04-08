@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -169,7 +170,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
 
         // actual test for GenerateRefreshToken method,
         // which is private, so its triggered through LoginUserAsync and
-        // then check the database for the expected changes
+        // then it checks the database for the expected changes
         [Fact]
         public async Task GenerateRefreshToken_SetsTokenAndExpiry_AndPersistsToDatabase()
         {
@@ -215,7 +216,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
 
         // This is also a private method,
         // so its tested indirectly through LoginUserAsync
-        // and then validate the structure and claims of the generated JWT token
+        // and then validates the structure and claims of the generated JWT token
         [Fact]
         public async Task LoginUserAsync_GeneratesValidJwtToken_WithCorrectClaims()
         {
@@ -433,6 +434,75 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
 
             var updatedUser = await context.Users.FindAsync(1);
             updatedUser!.RefreshToken.Should().Be(result.RefreshToken);
+        }
+
+        [Fact]
+        public async Task SoftDeleteUserAsync_WhenUserNotFound_ReturnsUserNotFound()
+        {
+
+            var context = GetInMemoryDbContext();
+
+            var mockConfig = new Mock<IConfiguration>();
+            var service = new AuthServices(mockConfig.Object, context);
+
+
+            var result = await service.SoftDeleteUserAsync(1, "password");
+
+
+            Assert.Equal("UserNotFound", result);
+        }
+
+
+        [Fact]
+        public async Task SoftDeleteUserAsync_WhenPasswordIsIncorrect_ReturnsWrongPassword()
+        {
+
+            var context = GetInMemoryDbContext();
+
+            var user = new User
+            {
+                UserId = 1,
+                PasswordHash = new PasswordHasher<User>().HashPassword(new User(), "correct")
+            };
+
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+
+            var mockConfig = new Mock<IConfiguration>();
+            var service = new AuthServices(mockConfig.Object, context);
+
+            var result = await service.SoftDeleteUserAsync(1, "wrong");
+
+
+            Assert.Equal("WrongPassword", result);
+        }
+
+
+        [Fact]
+        public async Task SoftDeleteUserAsync_WhenPasswordCorrect_DeletesUserAndReturnsDeleted()
+        {
+
+            var context = GetInMemoryDbContext();
+
+            var user = new User
+            {
+                UserId = 1,
+                PasswordHash = new PasswordHasher<User>().HashPassword(new User(), "correct"),
+                IsDeleted = false
+            };
+
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+
+            var mockConfig = new Mock<IConfiguration>();
+            var service = new AuthServices(mockConfig.Object, context);
+
+
+            var result = await service.SoftDeleteUserAsync(1, "correct");
+
+
+            Assert.Equal("Deleted", result);
+            Assert.True(user.IsDeleted);
         }
 
 

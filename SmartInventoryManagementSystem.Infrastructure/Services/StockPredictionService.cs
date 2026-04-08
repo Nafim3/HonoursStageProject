@@ -13,17 +13,14 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
     {
         public StockPredictionResult Predict(Product product,List<SaleItem> saleItemsLast30Days)
         {
-            var totalSold = saleItemsLast30Days
-                .Where(si => si.ProductId == product.ProductId)
-                .Sum(si => si.Quantity);
+            var totalSold = saleItemsLast30Days.Sum(si => si.Quantity);
 
             double averageDailySales = totalSold / 30.0;
 
             if (averageDailySales <= 0)
                 averageDailySales = 1;
 
-            double daysRemaining =
-                product.QuantityInStock / averageDailySales;
+            double daysRemaining = product.QuantityInStock / averageDailySales;
 
             bool shouldReorder = daysRemaining < 7;
 
@@ -32,8 +29,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
             if (shouldReorder)
             {
                 suggestedReorderQuantity =
-                    (int)((averageDailySales * 14)
-                    - product.QuantityInStock);
+                    (int)((averageDailySales * 14) - product.QuantityInStock);
 
                 if (suggestedReorderQuantity < 0)
                     suggestedReorderQuantity = 0;

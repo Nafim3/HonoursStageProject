@@ -22,10 +22,10 @@ namespace SmartInventoryManagementSystem.ApiTests.AlertEndpoint
             await using var factory = new ApiFactory();
             var client = factory.CreateClient();
 
-            // Act
+          
             var response = await client.DeleteAsync("/api/alert/1");
 
-            // Assert
+         
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
@@ -48,10 +48,10 @@ namespace SmartInventoryManagementSystem.ApiTests.AlertEndpoint
                 db.SaveChanges();
             }
 
-            // Act
+         
             var response = await client.DeleteAsync("/api/alert/1");
 
-            // Assert
+        
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
@@ -61,7 +61,7 @@ namespace SmartInventoryManagementSystem.ApiTests.AlertEndpoint
             await using var factory = new ApiFactory();
             var client = factory.CreateClient();
 
-            // Clean + Seed database
+          
             await using (var scope = factory.Services.CreateAsyncScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -79,10 +79,10 @@ namespace SmartInventoryManagementSystem.ApiTests.AlertEndpoint
                 await db.SaveChangesAsync();
             }
 
-            // Act
+          
             var response = await client.DeleteAsync("/api/alert/1");
 
-            // Assert
+           
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
@@ -92,7 +92,7 @@ namespace SmartInventoryManagementSystem.ApiTests.AlertEndpoint
             await using var factory = new ApiFactory();
             var client = factory.CreateClient();
 
-            // Seed
+          
             await using (var scope = factory.Services.CreateAsyncScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -118,7 +118,7 @@ namespace SmartInventoryManagementSystem.ApiTests.AlertEndpoint
                     new Alert
                     {
                         Id = 3,
-                        UserId = 2, // different user
+                        UserId = 2,
                         Message = "User 2 Alert",
                         Category = "Stock"
                     }
@@ -127,20 +127,20 @@ namespace SmartInventoryManagementSystem.ApiTests.AlertEndpoint
                 await db.SaveChangesAsync();
             }
 
-            // Act
+    
             var response = await client.GetAsync("/api/alert/list");
 
-            // Assert status
+         
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            // Read response body
+            
             var content = await response.Content.ReadAsStringAsync();
             var alerts = JsonSerializer.Deserialize<List<AlertDTO>>(
                 content,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             alerts.Should().NotBeNull();
-            alerts!.Count.Should().Be(2); // Only UserId = 1 alerts
+            alerts!.Count.Should().Be(2); 
         }
     }
 }

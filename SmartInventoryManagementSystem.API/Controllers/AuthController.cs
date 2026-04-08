@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SmartInventoryManagementSystem.Application.DTO.AuthDTO;
+using SmartInventoryManagementSystem.Application.DTO.DeleteUserDTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
 
 namespace SmartInventoryManagementSystem.API.Controllers
@@ -12,10 +13,12 @@ namespace SmartInventoryManagementSystem.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthServices _authService;
+        private readonly ICurrentUserService _currentUser;
 
-        public AuthController(IAuthServices authService)
+        public AuthController(IAuthServices authService, ICurrentUserService currentUser)
         {
             _authService = authService;
+            _currentUser = currentUser;
         }
 
         [HttpPost("Register")]
@@ -33,11 +36,12 @@ namespace SmartInventoryManagementSystem.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginUser dto)
         {
-            var Token = await _authService.LoginUserAsync(dto.Identifier!, dto.Password!);
-            if (Token == null)
+            var user = await _authService.LoginUserAsync(dto.Identifier!, dto.Password!);
+            if (user == null)
                 return Unauthorized();
 
-            return Ok(Token);
+
+            return Ok(user);
         }
 
         [HttpPost("refresh")]
@@ -51,6 +55,27 @@ namespace SmartInventoryManagementSystem.API.Controllers
                 return Unauthorized();
 
             return Ok(TokenGen);
+        }
+
+        [Authorize]
+        [HttpPost("delete-account/me")]
+
+        public async Task<IActionResult> DeleteUser([FromBody] DeleteAccountRequest request)
+        {
+            var currentUserId = _currentUser.UserId;
+
+            if (currentUserId == 0)
+                return Unauthorized();
+
+            var result = await _authService.SoftDeleteUserAsync(currentUserId, request.Password);
+
+            if (result == "WrongPassword")
+                return BadRequest("Incorrect password");
+
+            if (result == "UserNotFound")
+                return NotFound();
+
+            return Ok("Account deactivated successfully");
         }
 
     }

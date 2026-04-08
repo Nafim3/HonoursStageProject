@@ -8,6 +8,7 @@ namespace SmartInventoryManagementSystem.API.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
+    
     public class AnalyticsController : ControllerBase
     {
         private readonly IAnalyticsService _analyticsService;

@@ -36,7 +36,7 @@
                 @foreach (var item in Predictions)
                 {
                     <tr>
-                        <td class="text-center">@item.ProductName</td>
+                        <td class="text-center">@item.PName</td>
                         <td class="text-center">@item.Prediction.AverageDailySales.ToString("0.00")</td>
                         <td class="text-center">@item.Prediction.DaysRemaining.ToString("0.00")</td>
                         <td class="text-center">@item.Prediction.SuggestedReorderQuantity</td>
@@ -56,25 +56,11 @@
 @code 
 {
     private List<ProductListDto> Products = new();
-    private List<ProductPredictionViewModel>? Predictions;
+    private List<PredictionWrapper>? Predictions;
 
     protected override async Task OnInitializedAsync()
     {
-        Products = await Http.GetFromJsonAsync<List<ProductListDto>>("api/product") ?? new();
-
-        var tasks = Products.Select(async p =>
-        {
-            var pred = await Http.GetFromJsonAsync<StockPredictionResult>(
-                $"api/StockPrediction/{p.ProductId}/prediction");
-
-            return new ProductPredictionViewModel
-            {
-                ProductName = p.Name!,
-                Prediction = pred!
-            };
-        });
-
-        Predictions = (await Task.WhenAll(tasks)).ToList();
+        Predictions = await Http.GetFromJsonAsync<List<PredictionWrapper>>("api/StockPrediction/prediction");
     }
 
     private string GetRiskColor(string? risk)
@@ -92,11 +78,5 @@
         };
     }
 
-
-    public class ProductPredictionViewModel
-    {
-        public string ProductName { get; set; } = "";
-        public StockPredictionResult Prediction { get; set; } = new();
-    }
 }
 

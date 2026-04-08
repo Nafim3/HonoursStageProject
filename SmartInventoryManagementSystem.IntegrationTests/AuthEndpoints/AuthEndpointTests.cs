@@ -1,22 +1,32 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 using SmartInventoryManagementSystem.ApiTests.Helper;
 using SmartInventoryManagementSystem.Application.DTO.AuthDTO;
+using SmartInventoryManagementSystem.Application.DTO.DeleteUserDTO;
 using SmartInventoryManagementSystem.Application.Interfaces;
+using SmartInventoryManagementSystem.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace SmartInventoryManagementSystem.ApiTests.AuthEndpoints
 {
     public class AuthEndpointTests : IClassFixture<ApiFactory>
     {
+        private readonly ApiFactory _factory;
+
+        public AuthEndpointTests(ApiFactory factory)
+        {
+            _factory = factory;
+        }
+
 
         [Fact]
         public async Task Register_ShouldReturnOk_WhenRegistrationSucceeds()
@@ -268,6 +278,100 @@ namespace SmartInventoryManagementSystem.ApiTests.AuthEndpoints
 
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
+
+        [Fact]
+        public async Task DeleteUser_ReturnsOk_WhenPasswordIsCorrect()
+        {
+            // Arrange
+            var mockAuth = new Mock<IAuthServices>();
+            mockAuth
+                .Setup(x => x.SoftDeleteUserAsync(1, "correct"))
+                .ReturnsAsync("Success");
+
+            var factory = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                {
+                    services.RemoveAll(typeof(IAuthServices));
+                    services.AddSingleton(mockAuth.Object);
+                });
+            });
+
+            var client = factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Test");
+
+            var body = new DeleteAccountRequest { Password = "correct" };
+            var content = JsonContent.Create(body);
+
+            // Act
+            var response = await client.PostAsync("/api/auth/delete-account/me", content);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var text = await response.Content.ReadAsStringAsync();
+            text.Should().Contain("Account deactivated successfully");
+        }
+
+        [Fact]
+        public async Task DeleteUser_ReturnsBadRequest_WhenPasswordIsWrong()
+        {
+            var mockAuth = new Mock<IAuthServices>();
+            mockAuth
+                .Setup(x => x.SoftDeleteUserAsync(1, "wrong"))
+                .ReturnsAsync("WrongPassword");
+
+            var factory = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                {
+                    services.RemoveAll(typeof(IAuthServices));
+                    services.AddSingleton(mockAuth.Object);
+                });
+            });
+
+            var client = factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Test");
+
+            var body = new DeleteAccountRequest { Password = "wrong" };
+            var content = JsonContent.Create(body);
+
+            var response = await client.PostAsync("/api/auth/delete-account/me", content);
+
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            (await response.Content.ReadAsStringAsync()).Should().Contain("Incorrect password");
+        }
+
+        [Fact]
+        public async Task DeleteUser_ReturnsNotFound_WhenUserDoesNotExist()
+        {
+            var mockAuth = new Mock<IAuthServices>();
+            mockAuth
+                .Setup(x => x.SoftDeleteUserAsync(1, "any"))
+                .ReturnsAsync("UserNotFound");
+
+            var factory = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                {
+                    services.RemoveAll(typeof(IAuthServices));
+                    services.AddSingleton(mockAuth.Object);
+                });
+            });
+
+            var client = factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Test");
+
+            var body = new DeleteAccountRequest { Password = "any" };
+            var content = JsonContent.Create(body);
+
+            var response = await client.PostAsync("/api/auth/delete-account/me", content);
+
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
 
 
     }

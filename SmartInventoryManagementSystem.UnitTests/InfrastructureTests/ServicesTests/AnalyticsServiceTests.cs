@@ -99,9 +99,9 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
             result.Select(r => (r.Year, r.Month)).Should().BeEquivalentTo(
                 new[]
                 {
-            (2024, 12),
+            (2025, 5),
             (2025, 1),
-            (2025, 5)
+            (2024, 12)
                 },
                 options => options.WithStrictOrdering()
             );

@@ -55,11 +55,11 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
         public async Task<TokenResponse?> LoginUserAsync(string identifier, string password)
         {
             var userInstance = await _context.Users
-         .FirstOrDefaultAsync(u =>
-             u.Email == identifier ||
-             u.Username == identifier);
+        .FirstOrDefaultAsync(u =>
+            !u.IsDeleted &&
+            (u.Email == identifier || u.Username == identifier));
 
-            if (userInstance == null)
+            if (userInstance == null || userInstance.IsDeleted)
                 return null;
 
             var result = new PasswordHasher<User>()
@@ -77,6 +77,8 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                 RefreshToken = await GenerateRefreshToken(userInstance)
             };
         }
+
+
 
         private async Task <string> GenerateRefreshToken(User RTuser)
         {
@@ -128,6 +130,27 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                 RefreshToken = await GenerateRefreshToken(userInstance)
             };
             return GenToken;
+        }
+
+        public async Task<string> SoftDeleteUserAsync(int userId, string password)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (user == null)
+                return "UserNotFound";
+
+            var result = new PasswordHasher<User>()
+                .VerifyHashedPassword(user, user.PasswordHash, password);
+
+            if (result == PasswordVerificationResult.Failed)
+                return "WrongPassword";
+
+            user.IsDeleted = true;
+
+            await _context.SaveChangesAsync();
+
+            return "Deleted";
         }
     }
 }
