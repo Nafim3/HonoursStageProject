@@ -1,4 +1,4 @@
-name: UnitTests
+name: AllTests
 
 on:
   push:
@@ -22,9 +22,13 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    - name: Install Test Platform
+    - name: Project UnitTest
       working-directory: SmartInventoryManagementSystem.UnitTests
-      run: dotnet add package Microsoft.TestPlatform --version 18.3.0
+      run: dotnet test
+
+    - name: Project IntegrationTest
+      working-directory: SmartInventoryManagementSystem.IntegrationTests
+      run: dotnet test
 
     - name: Dependency Restore
       run: dotnet restore
