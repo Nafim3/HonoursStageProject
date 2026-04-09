@@ -25,6 +25,97 @@ namespace SmartInventoryManagementSystem.ApiTests.SalesEndpoints
     {
 
         [Fact]
+        public async Task CreateSale_ShouldReturnOk_WhenServiceSucceeds()
+        {
+            await using var factory = new ApiFactory();
+
+            var mockSaleService = new Mock<ISaleService>();
+            mockSaleService.Setup(s => s.CreateSaleAsync(It.IsAny<CreateSaleRequest>()))
+                           .ReturnsAsync(new CreateSaleResponse
+                           {
+                               SaleId = 123,
+                               TotalAmount = 75m,
+                               ItemCount = 2
+                           });
+
+            var client = factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                {
+                    services.RemoveAll<ISaleService>();
+                    services.AddScoped(_ => mockSaleService.Object);
+
+                    // Mock IPdfService to avoid issues with PDF generation during tests
+                    services.RemoveAll<IPdfService>();
+                    services.AddScoped<IPdfService>(_ => Mock.Of<IPdfService>());
+
+                });
+            }).CreateClient();
+
+            var dto = new CreateSaleRequest
+            {
+                BuyerName = "Samin",
+                Items =
+        {
+            new CreateSaleItemRequest { ProductId = 1, Quantity = 2 },
+            new CreateSaleItemRequest { ProductId = 2, Quantity = 1 }
+        }
+            };
+
+            var response = await client.PostAsJsonAsync("/api/sales/CreateSale", dto);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var result = await response.Content.ReadFromJsonAsync<CreateSaleResponse>();
+            result!.SaleId.Should().Be(123);
+            result.TotalAmount.Should().Be(75m);
+            result.ItemCount.Should().Be(2);
+        }
+
+
+        [Fact]
+        public async Task CreateSale_ShouldReturnBadRequest_WhenServiceThrows()
+        {
+            await using var factory = new ApiFactory();
+
+            var mockSaleService = new Mock<ISaleService>();
+            mockSaleService.Setup(s => s.CreateSaleAsync(It.IsAny<CreateSaleRequest>()))
+                           .ThrowsAsync(new Exception("Something went wrong"));
+
+            var client = factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                {
+                    services.RemoveAll<ISaleService>();
+                    services.AddScoped(_ => mockSaleService.Object);
+
+                    // Mock IPdfService to avoid issues with PDF generation during tests
+                    services.RemoveAll<IPdfService>();
+                    services.AddScoped<IPdfService>(_ => Mock.Of<IPdfService>());
+                });
+            }).CreateClient();
+
+            var dto = new CreateSaleRequest
+            {
+                BuyerName = "Kaiser",
+                Items =
+        {
+            new CreateSaleItemRequest { ProductId = 1, Quantity = 2 }
+        }
+            };
+
+            var response = await client.PostAsJsonAsync("/api/sales/CreateSale", dto);
+
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var body = await response.Content.ReadAsStringAsync();
+            body.Should().Contain("Something went wrong");
+
+
+        }
+
+
+        [Fact]
         public async Task CreateSale_ShouldReturnUnauthorized_WhenNotAuthenticated()
         {
             await using var factory = new ApiFactory();
