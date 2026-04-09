@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ASPNETCORE_ENVIRONMENT: Testing
 
     steps:
     - name: Checkout Repository
