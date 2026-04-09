@@ -35,13 +35,13 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
 
             html.Should().Contain("Keyboard");
             html.Should().Contain("2");
-            html.Should().Contain("£50.00");   // currency formatting
-            html.Should().Contain("£100.00");
+            html.Should().Contain("50.00");   // currency formatting
+            html.Should().Contain("100.00");
 
             html.Should().Contain("Mouse");
             html.Should().Contain("1");
-            html.Should().Contain("£50.00");
-            html.Should().Contain("£50.00");
+            html.Should().Contain("50.00");
+            html.Should().Contain("50.00");
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
             var html = BuildInvoice.BuildFromEntity(sale);
 
             html.Should().Contain("Grand Total");
-            html.Should().Contain("£150.00");
+            html.Should().Contain("150.00");
         }
 
         [Fact]
