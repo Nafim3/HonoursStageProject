@@ -1,0 +1,34 @@
+name: UnitTests
+
+on:
+  push:
+    branches:
+      - main
+
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET environment
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Install Test Platform
+      working-directory: SmartInventoryManagementSystem.UnitTests
+      run: dotnet add package Microsoft.TestPlatform --version 18.3.0
+
+    - name: Dependency Restore
+      run: dotnet restore
+
+    - name: Project Build
+      run: dotnet build
+
+    - name: Project UnitTest
+      run: dotnet test
