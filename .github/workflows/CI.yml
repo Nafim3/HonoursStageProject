@@ -20,23 +20,16 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    - name: Project UnitTest
-      working-directory: SmartInventoryManagementSystem.UnitTests
-      run: dotnet test
-
-    - name: Install libwkhtmltox dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libwkhtmltox0
-
-    - name: Project IntegrationTest
-      working-directory: SmartInventoryManagementSystem.IntegrationTests
-      run: dotnet test
-
     - name: Dependency Restore
       run: dotnet restore
+      
     - name: Project Build
       run: dotnet build
 
     - name: Project UnitTest
+      working-directory: SmartInventoryManagementSystem.UnitTests
+      run: dotnet test
+
+    - name: Project IntegrationTest
+      working-directory: SmartInventoryManagementSystem.IntegrationTests
       run: dotnet test
