@@ -101,8 +101,5 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
                 };
             }
         }
-
-
-
     }
 }

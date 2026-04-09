@@ -15,18 +15,21 @@
 
 <div class="container py-4">
 
+    
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-       
+        
         <button class="btn btn-outline-primary" @onclick="ToggleSidebar">
             <i class="bi bi-list fs-3"></i>
         </button>
 
        
+        
         <div class="d-flex align-items-center gap-3">
 
           
+           
             <div class="dropdown">
                 <button class="btn position-relative" @onclick="Toggle">
                     <i class="bi bi-bell fs-5"></i>
@@ -63,6 +66,7 @@
 
           
             <div class="dropdown">
+                
                 <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
                     <i class="bi bi-person-circle"></i> Account
                 </button>
@@ -114,6 +118,7 @@
 
 
     <h2 class="text-center mb-5 text-primary fw-bold">Inventory Management System</h2>
+    <br><br><br><br><br><br>
 
     @if (dashboard == null)
     {
@@ -122,48 +127,72 @@
             <p>Loading dashboard...</p>
         </div>
     }
+
+
     else
     {
 
-        <div class="row g-4">
 
-            <div class="col-md-3">
-                <div class="card shadow-sm border-primary">
-                    <div class="card-body text-center">
-                        <h6 class="text-uppercase text-muted small">Total Products</h6>
-                        <h2 class="fw-bold text-primary">@dashboard.TotalProducts</h2>
+        <div id="dashboardCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="2500">
+
+            <div class="carousel-inner">
+
+                <!-- Slide 1 (Cards 1 + 2) -->
+                <div class="carousel-item active">
+                    <div class="d-flex justify-content-center gap-4">
+
+                        <div class="card shadow-sm border-primary" style="width: 18rem;">
+                            <div class="card-body text-center">
+                                <h6 class="text-uppercase text-muted small">Total Products</h6>
+                                <h2 class="fw-bold text-primary">@dashboard.TotalProducts</h2>
+                            </div>
+                        </div>
+
+                        <div class="card shadow-sm border-success" style="width: 18rem;">
+                            <div class="card-body text-center">
+                                <h6 class="text-uppercase text-muted small">Sales Today</h6>
+                                <h2 class="fw-bold text-success">@dashboard.SalesToday</h2>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-3">
-                <div class="card shadow-sm border-success">
-                    <div class="card-body text-center">
-                        <h6 class="text-uppercase text-muted small">Sales Today</h6>
-                        <h2 class="fw-bold text-success">@dashboard.SalesToday</h2>
+                <!-- Slide 2 (Cards 3 + 4) -->
+                <div class="carousel-item">
+                    <div class="d-flex justify-content-center gap-4">
+
+                        <div class="card shadow-sm border-warning" style="width: 18rem;">
+                            <div class="card-body text-center">
+                                <h6 class="text-uppercase text-muted small">Low Stock Items</h6>
+                                <h2 class="fw-bold text-warning">@dashboard.LowStockCount</h2>
+                            </div>
+                        </div>
+
+                        <div class="card shadow-sm border-danger" style="width: 18rem;">
+                            <div class="card-body text-center">
+                                <h6 class="text-uppercase text-muted small">Expired Products</h6>
+                                <h2 class="fw-bold text-danger">@dashboard.ExpiredProductsCount</h2>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
+
             </div>
 
-            <div class="col-md-3">
-                <div class="card shadow-sm border-warning">
-                    <div class="card-body text-center">
-                        <h6 class="text-uppercase text-muted small">Low Stock Items</h6>
-                        <h2 class="fw-bold text-warning">@dashboard.LowStockCount</h2>
-                    </div>
-                </div>
-            </div>
+            <!-- Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#dashboardCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
 
-            <div class="col-md-3">
-                <div class="card shadow-sm border-danger">
-                    <div class="card-body text-center">
-                        <h6 class="text-uppercase text-muted small">Expired Products</h6>
-                        <h2 class="fw-bold text-danger">@dashboard.ExpiredProductsCount</h2>
-                    </div>
-                </div>
-            </div>
+            <button class="carousel-control-next" type="button" data-bs-target="#dashboardCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
 
         </div>
+
+
 
 
         <hr class="my-5 opacity-25" />
@@ -356,7 +385,20 @@
     .chat-body, .chat-message, .chat-input, .chat-input input, .chat-input button {
         color: #000 !important;
     }
+
+    .card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        }
+
 </style>
+
+
+
 
 
 @code

@@ -57,11 +57,16 @@ builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IStockPredictionService, StockPredictionService>();
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddSingleton<IConverter>(
-    new SynchronizedConverter(new PdfTools())
-);
 
-builder.Services.AddScoped<IPdfService, PdfService>();
+
+if (!builder.Environment.IsEnvironment("Testing"))
+{
+    builder.Services.AddSingleton<IConverter>(
+    new SynchronizedConverter(new PdfTools())
+    );
+
+    builder.Services.AddScoped<IPdfService, PdfService>();
+}
 
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

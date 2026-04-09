@@ -20,48 +20,6 @@ namespace SmartInventoryManagementSystem.Client.Authentication
             _clientFactory = clientFactory;
         }
 
-        //protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        //{
-        //    var token = await _localStorage.GetItemAsync<string>("accessToken");
-        //    if (!string.IsNullOrWhiteSpace(token))
-        //        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        //    var response = await base.SendAsync(request, cancellationToken);
-
-        //    if (response.StatusCode == HttpStatusCode.Unauthorized)
-        //    {
-        //        var refreshToken = await _localStorage.GetItemAsync<string>("refreshToken");
-
-        //        if (!string.IsNullOrWhiteSpace(refreshToken) && !string.IsNullOrWhiteSpace(token))
-        //        {
-        //            var userId = CustomAuthStateProvider.ExtractUserId(token);
-
-        //            var client = _clientFactory.CreateClient("API");
-
-        //            var refreshResponse = await client.PostAsJsonAsync("api/auth/refresh", new RefreshTokenRequest
-        //            {
-        //                RefreshToken = refreshToken,
-        //                UserId = userId
-        //            });
-
-        //            if (refreshResponse.IsSuccessStatusCode)
-        //            {
-        //                var newTokens = await refreshResponse.Content.ReadFromJsonAsync<TokenResponse>();
-        //                if (newTokens is null)
-        //                    return response;
-
-        //                await _localStorage.SetItemAsync("accessToken", newTokens.AccessToken);
-        //                await _localStorage.SetItemAsync("refreshToken", newTokens.RefreshToken);
-
-        //                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", newTokens.AccessToken);
-        //                return await base.SendAsync(request, cancellationToken);
-        //            }
-        //        }
-        //    }
-
-        //    return response;
-        //}
-
 
         protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
