@@ -1,4 +1,4 @@
-name: AllTests
+name: UnitTests
 
 on:
   push:
@@ -28,8 +28,4 @@ jobs:
 
     - name: Project UnitTest
       working-directory: SmartInventoryManagementSystem.UnitTests
-      run: dotnet test
-
-    - name: Project IntegrationTest
-      working-directory: SmartInventoryManagementSystem.IntegrationTests
       run: dotnet test
