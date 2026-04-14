@@ -267,7 +267,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
             token.Issuer.Should().Be("TestIssuer");
             token.Audiences.Should().Contain("TestAudience");
 
-            token.ValidTo.Should().BeCloseTo(DateTime.UtcNow.AddDays(7), TimeSpan.FromSeconds(5));
+            token.ValidTo.Should().BeCloseTo(DateTime.UtcNow.AddMinutes(15), TimeSpan.FromSeconds(5));
         }
 
         [Fact]

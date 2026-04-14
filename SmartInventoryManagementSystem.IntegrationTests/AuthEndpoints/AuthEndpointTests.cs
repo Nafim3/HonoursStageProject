@@ -310,7 +310,7 @@ namespace SmartInventoryManagementSystem.ApiTests.AuthEndpoints
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             var text = await response.Content.ReadAsStringAsync();
-            text.Should().Contain("Account deactivated successfully");
+            text.Should().Contain("Account deleted successfully");
         }
 
         [Fact]

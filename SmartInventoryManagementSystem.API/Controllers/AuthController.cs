@@ -28,7 +28,6 @@ namespace SmartInventoryManagementSystem.API.Controllers
 
             if (result == "Email already exists" || result == "Username already exists")
                 return BadRequest(new { message = result });
-
             return Ok(new { message = "Registration successful" });
 
         }
@@ -39,8 +38,6 @@ namespace SmartInventoryManagementSystem.API.Controllers
             var user = await _authService.LoginUserAsync(dto.Identifier!, dto.Password!);
             if (user == null)
                 return Unauthorized();
-
-
             return Ok(user);
         }
 
@@ -75,7 +72,7 @@ namespace SmartInventoryManagementSystem.API.Controllers
             if (result == "UserNotFound")
                 return NotFound();
 
-            return Ok("Account deactivated successfully");
+            return Ok("Account deleted successfully");
         }
 
     }

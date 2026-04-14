@@ -26,8 +26,8 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
 
             var result = _service.Predict(product, saleItems);
 
-            Assert.Equal(1, result.AverageDailySales);
-            Assert.Equal(30, result.DaysRemaining);
+            Assert.Equal(0, result.AverageDailySales);
+            Assert.Equal(0, result.DaysRemaining);
             Assert.False(result.ShouldReorder);
             Assert.Equal("Safe", result.RiskLevel);
         }

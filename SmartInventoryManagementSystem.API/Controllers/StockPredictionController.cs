@@ -40,31 +40,32 @@ namespace SmartInventoryManagementSystem.API.Controllers
 
             var thirtyDaysAgo = DateTime.UtcNow.AddDays(-30);
 
-            var results = new List<PredictionWrapper>();
+            var allSaleItems = await _context.SaleItems
+                .Include(si => si.Sale)
+                .Where(si =>
+                    si.Sale != null &&
+                    si.Sale.UserId == userId &&
+                    si.Sale.SaleDate >= thirtyDaysAgo)
+                .ToListAsync();
 
-            foreach (var product in products)
+            var results = products.Select(product =>
             {
-                var saleItems = await _context.SaleItems
-                    .Include(si => si.Sale)
-                    .Where(si =>
-                        si.ProductId == product.ProductId &&
-                        si.Sale != null &&
-                        si.Sale.UserId == userId &&
-                        si.Sale.SaleDate >= thirtyDaysAgo)
-                    .ToListAsync();
+                var saleItems = allSaleItems
+                    .Where(si => si.ProductId == product.ProductId)
+                    .ToList();
 
                 var prediction = _predictionService.Predict(product, saleItems);
 
-                results.Add(new PredictionWrapper
+                return new PredictionWrapper
                 {
                     PName = product.ProductName!,
                     Prediction = prediction
-                });
-            }
+                };
+            }).ToList();
 
             return Ok(results);
-
         }
+
 
     }
 }

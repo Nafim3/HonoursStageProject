@@ -17,8 +17,7 @@ namespace SmartInventoryManagementSystem.API.Controllers
 
         public DashboardController(IProductRepository productRepo,ISaleRepository saleRepo, IAlertRepository alertRepository)
         {
-            _productRepo = productRepo;
-           
+            _productRepo = productRepo;          
             _saleRepo = saleRepo;
             _alertRepo = alertRepository;
         }

@@ -55,7 +55,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
         public async Task<TokenResponse?> LoginUserAsync(string identifier, string password)
         {
             var userInstance = await _context.Users
-        .FirstOrDefaultAsync(u =>
+            .FirstOrDefaultAsync(u =>
             !u.IsDeleted &&
             (u.Email == identifier || u.Username == identifier));
 
@@ -110,7 +110,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                     issuer: _configuration.GetValue<string>("AppSettings:Issuer"),
                     audience: _configuration.GetValue<string>("AppSettings:Audience"),
                     claims: claims,
-                    expires: DateTime.UtcNow.AddDays(7),
+                    expires: DateTime.UtcNow.AddMinutes(15),
                     signingCredentials: credentials
                 );
             return new JwtSecurityTokenHandler().WriteToken(TokenBuilder);

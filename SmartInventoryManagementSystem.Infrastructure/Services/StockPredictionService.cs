@@ -15,10 +15,20 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
         {
             var totalSold = saleItemsLast30Days.Sum(si => si.Quantity);
 
-            double averageDailySales = totalSold / 30.0;
+            // Handle no sales properly
+            if (totalSold <= 0)
+            {
+                return new StockPredictionResult
+                {
+                    AverageDailySales = 0,
+                    DaysRemaining = 0,
+                    ShouldReorder = false,
+                    SuggestedReorderQuantity = 0,
+                    RiskLevel = "Safe"
+                };
+            }
 
-            if (averageDailySales <= 0)
-                averageDailySales = 1;
+            double averageDailySales = totalSold / 30.0;
 
             double daysRemaining = product.QuantityInStock / averageDailySales;
 
@@ -31,11 +41,8 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                 suggestedReorderQuantity =
                     (int)((averageDailySales * 14) - product.QuantityInStock);
 
-                if (suggestedReorderQuantity < 0)
-                    suggestedReorderQuantity = 0;
-
+                suggestedReorderQuantity = Math.Max(0, suggestedReorderQuantity);
             }
-
 
             string riskLevel;
 

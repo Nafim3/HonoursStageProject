@@ -90,7 +90,6 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
             return null;
         }
 
-
         public async Task<string?> DeleteProductAsync(int id)
         {
             var product = await _context.Products
@@ -120,7 +119,6 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
 
         }
 
-
         public async Task <List<Product>> GetLowStockProductsAsync(int userId)
         {
             return await _context.Products
@@ -130,6 +128,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
+
         public async Task <List<Product>> GetExpiredProductsAsync(int userId)
         {
             var currentDate = DateTime.UtcNow;
