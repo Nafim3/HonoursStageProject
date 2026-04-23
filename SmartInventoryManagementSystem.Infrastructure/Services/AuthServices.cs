@@ -110,7 +110,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
                     issuer: _configuration.GetValue<string>("AppSettings:Issuer"),
                     audience: _configuration.GetValue<string>("AppSettings:Audience"),
                     claims: claims,
-                    expires: DateTime.UtcNow.AddMinutes(15),
+                    expires: DateTime.UtcNow.AddMinutes(10),
                     signingCredentials: credentials
                 );
             return new JwtSecurityTokenHandler().WriteToken(TokenBuilder);
