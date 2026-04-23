@@ -81,7 +81,7 @@ namespace SmartInventoryManagementSystem.Client.Authentication
                         return expiry <= DateTimeOffset.UtcNow;
                     }
 
-                    // sometimes exp could be string
+                    
                     if (expProp.ValueKind == JsonValueKind.String && long.TryParse(expProp.GetString(), out expSeconds))
                     {
                         var expiry = DateTimeOffset.FromUnixTimeSeconds(expSeconds);
@@ -159,11 +159,11 @@ namespace SmartInventoryManagementSystem.Client.Authentication
             using var doc = JsonDocument.Parse(json);
             var root = doc.RootElement;
 
-            // Try nameid
+           
             if (root.TryGetProperty("nameid", out var idProp))
                 return int.Parse(idProp.GetString()!);
 
-            // Try sub
+          
             if (root.TryGetProperty("sub", out var subProp))
                 return int.Parse(subProp.GetString()!);
 

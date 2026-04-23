@@ -18,7 +18,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
         [Fact]
         public async Task NotifyLowStockAsync_DoesNothing_WhenAlertAlreadyExists()
         {
-            // Arrange
+          
             var alertRepoMock = new Mock<IAlertRepository>();
             var NotificationServiceTest = new NotificationService(alertRepoMock.Object);
 
@@ -180,7 +180,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
 
             result.Should().HaveCount(3);
 
-            // Sorted descending by CreatedAt
+           
             result[0].Id.Should().Be(3); // 2024-01-03
             result[1].Id.Should().Be(1); // 2024-01-02
             result[2].Id.Should().Be(2); // 2024-01-01

@@ -53,7 +53,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
             var product = new Product { QuantityInStock = 5 };
             var saleItems = new List<SaleItem>
         {
-            new SaleItem { Quantity = 30 } // 1 per day
+            new SaleItem { Quantity = 30 } 
         };
 
             var result = _service.Predict(product, saleItems);
@@ -84,7 +84,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
             var product = new Product { QuantityInStock = 100 };
             var saleItems = new List<SaleItem>
         {
-                // 1 per day
+               
             new SaleItem { Quantity = 30 } 
         };
 

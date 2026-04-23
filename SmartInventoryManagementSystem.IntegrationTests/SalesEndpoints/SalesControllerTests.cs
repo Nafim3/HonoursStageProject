@@ -45,7 +45,7 @@ namespace SmartInventoryManagementSystem.ApiTests.SalesEndpoints
                     services.RemoveAll<ISaleService>();
                     services.AddScoped(_ => mockSaleService.Object);
 
-                    // Mock IPdfService to avoid issues with PDF generation during tests
+                   
                     services.RemoveAll<IPdfService>();
                     services.AddScoped<IPdfService>(_ => Mock.Of<IPdfService>());
 
@@ -89,7 +89,7 @@ namespace SmartInventoryManagementSystem.ApiTests.SalesEndpoints
                     services.RemoveAll<ISaleService>();
                     services.AddScoped(_ => mockSaleService.Object);
 
-                    // Mock IPdfService to avoid issues with PDF generation during tests
+                   
                     services.RemoveAll<IPdfService>();
                     services.AddScoped<IPdfService>(_ => Mock.Of<IPdfService>());
                 });

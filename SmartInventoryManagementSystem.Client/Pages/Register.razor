@@ -54,7 +54,7 @@
 
                 <div class="text-center mt-3">
                     <span class="text-muted">Already Have an Account?</span>
-                    <a href="/" class="text-primary fw-semibold ms-1">
+                    <a href="/login" class="text-primary fw-semibold ms-1">
                         Login Here
                     </a>
                 </div>
@@ -80,7 +80,7 @@
         {
             message = "Registration successful";
             await Task.Delay(1200);
-            Nav.NavigateTo("/");
+            Nav.NavigateTo("/login");
         }
         else
         {

@@ -80,7 +80,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.ServicesT
 
             var result = await service.RegisterUserAsync("newUser", "new@example.com", "password123");
 
-            result.Should().NotBeNull(); // success returns userId string
+            result.Should().NotBeNull(); 
             int.Parse(result!).Should().BeGreaterThan(0);
 
             var createdUser = await context.Users.FirstOrDefaultAsync(u => u.Email == "new@example.com");

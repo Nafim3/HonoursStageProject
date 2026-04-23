@@ -42,11 +42,11 @@ namespace SmartInventoryManagementSystem.ApiTests.AnalyticsEndpoints
             {
                 builder.ConfigureServices(services =>
                 {
-                    // removes the fake auth handler
+                    
                     services.RemoveAll<IAuthenticationSchemeProvider>();
                     services.RemoveAll<IAuthenticationHandlerProvider>();
 
-                    // "None" scheme that always fails
+                    
                     services.AddAuthentication(options =>
                     {
                         options.DefaultAuthenticateScheme = "None";

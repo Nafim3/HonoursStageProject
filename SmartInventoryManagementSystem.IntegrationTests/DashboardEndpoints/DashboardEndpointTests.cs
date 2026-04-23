@@ -34,7 +34,7 @@ namespace SmartInventoryManagementSystem.ApiTests.DashboardEndpoints
             var mockAlertRepo = new Mock<IAlertRepository>();
 
             mockProductRepo.Setup(r => r.GetProductAsync())
-                .ReturnsAsync(new List<Product> { new Product(), new Product() }); // 2 products
+                .ReturnsAsync(new List<Product> { new Product(), new Product() }); 
 
             mockSaleRepo.Setup(r => r.FetchAllSalesAsync())
                 .ReturnsAsync(new List<Sale>

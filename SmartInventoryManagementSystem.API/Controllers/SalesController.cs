@@ -45,10 +45,10 @@ namespace SmartInventoryManagementSystem.API.Controllers
             if (saleRepository == null)
                 return BadRequest(new { MSG = "Sale repository is not available." });
 
-            // 1️⃣ Fetch entities
+            // Fetch entities
             var salesEntities = await saleRepository.FetchAllSalesAsync();
 
-            // 2️⃣ Map to DTOs
+            // Map to DTOs
             var salesDto = salesEntities.Select(s => new GetAllSales
             {
                 SaleId = s.SaleId,
@@ -67,7 +67,7 @@ namespace SmartInventoryManagementSystem.API.Controllers
             if (saleEntity == null)
                 return NotFound(new { MSG = $"Sale with ID {saleId} not found." });
 
-            // Map to DTO
+            
             var saleDto = new GetByID
             {
                 SaleId = saleEntity.SaleId,
@@ -94,10 +94,10 @@ namespace SmartInventoryManagementSystem.API.Controllers
             if (saleEntity == null)
                 return NotFound();
 
-            // 2️⃣ Generate PDF from entity
+          
             var pdfBytes = await _pdfService.GenerateInvoicePdf(saleEntity);
 
-            // 3️⃣ Return PDF file
+           
             return File(pdfBytes, "application/pdf", $"Invoice_{saleId}.pdf");
         }
     }

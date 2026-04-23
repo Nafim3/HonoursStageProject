@@ -204,7 +204,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
                 ProductId = 10,
                 ProductName = "Cabbage",
                 UserId = 7,
-                IsActive = false     // inactive
+                IsActive = false    
             });
 
             await context.SaveChangesAsync();
@@ -523,9 +523,6 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
 
             result.Should().BeEmpty();
         }
-
-       
-
 
     }
 }

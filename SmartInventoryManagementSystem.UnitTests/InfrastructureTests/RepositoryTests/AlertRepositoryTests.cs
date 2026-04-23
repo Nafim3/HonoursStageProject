@@ -25,7 +25,7 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
         [Fact]
         public async Task AddAsync_ShouldAddAlertToDatabase()
         {
-            // Arrange
+         
             var context = GetInMemoryDbContext();
             var repository = new AlertRepository(context);
 
@@ -37,10 +37,10 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
                 CreatedAt = DateTime.UtcNow
             };
 
-            // Act
+         
             await repository.AddAsync(alert);
 
-            // Assert
+           
             var alertsInDb = await context.Alerts.ToListAsync();
             alertsInDb.Count.Should().Be(1);
             alertsInDb.First().Message.Should().Be("Low stock for product");
@@ -243,8 +243,8 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
             var result = await Arepository.GetRecentAsync(1, "Stock", 2);
 
             result.Count.Should().Be(2);
-            result[0].Message.Should().Be("New Alert");     // newest
-            result[1].Message.Should().Be("Middle Alert");  // second newest
+            result[0].Message.Should().Be("New Alert");    
+            result[1].Message.Should().Be("Middle Alert");  
         }
 
         [Fact]
@@ -264,10 +264,10 @@ namespace SmartInventoryManagementSystem.UnitTests.InfrastructureTests.Repositor
             context.Alerts.Add(alert);
             await context.SaveChangesAsync();
 
-            // Act
+          
             await Arepository.DeleteAsync(alert);
 
-            // Assert
+           
             var exists = await context.Alerts.AnyAsync(a => a.Id == alert.Id);
             exists.Should().BeFalse();
         }

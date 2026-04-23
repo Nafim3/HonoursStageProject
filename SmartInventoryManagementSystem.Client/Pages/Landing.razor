@@ -1,0 +1,169 @@
+﻿@page "/"
+
+<div class="home-wrapper">
+
+
+    <div class="nav">
+        <div class="logo">StockWise</div>
+    </div>
+
+
+    <div class="hero">
+        <h1>Manage Inventory with Confidence</h1>
+        <p>
+            Track products, monitor sales, and make smarter stock decisions with built-in forecasting insights
+        </p>
+
+        <div class="hero-buttons">
+            <a href="/register" class="btn-primary">Get Started</a>
+            <a href="/login" class="btn-secondary">Login</a>
+        </div>
+    </div>
+
+ 
+    <div class="features">
+
+        <div class="feature-card">
+            <h3>Inventory Tracking</h3>
+            <p>Monitor stock levels and manage products with ease</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Sales Analytics</h3>
+            <p>Visualise revenue trends and track business performance</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Forecasting Insights</h3>
+            <p>Estimate stock usage and receive timely reorder recommendations</p>
+        </div>
+
+    </div>
+
+  
+    <div class="footer">
+        <p>© 2026 Smart Inventory Management System</p>
+    </div>
+
+</div>
+
+<style>
+    .home-wrapper {
+        font-family: Arial, sans-serif;
+        padding: 20px 40px;
+    }
+
+    /* NAVBAR */
+    .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .nav-link {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+    }
+
+    /* HERO */
+    .hero {
+        text-align: center;
+        margin-top: 100px;
+    }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 700;
+        }
+
+        .hero p {
+            margin-top: 15px;
+            color: #666;
+            font-size: 18px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+    .hero-buttons {
+        margin-top: 30px;
+    }
+
+    /* BUTTONS */
+    .btn-primary {
+        background-color: #3f51b5;
+        color: white;
+        padding: 12px 22px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .btn-primary.small {
+            padding: 8px 14px;
+            font-size: 14px;
+        }
+
+    .btn-secondary {
+        margin-left: 10px;
+        padding: 12px 22px;
+        border-radius: 8px;
+        border: 1px solid #3f51b5;
+        color: #3f51b5;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    /* FEATURES */
+    .features {
+        margin-top: 100px;
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        flex-wrap: wrap;
+    }
+
+    .feature-card {
+        width: 260px;
+        padding: 25px;
+        border-radius: 12px;
+        background: #f8f9fa;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+        .feature-card:nth-child(odd):hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 22px rgba(0,0,0,0.15);
+        }
+
+        
+        .feature-card:nth-child(even):hover {
+            transform: translateY(10px);
+            box-shadow: 0 10px 22px rgba(0,0,0,0.15);
+        }
+
+        .feature-card h3 {
+            margin-bottom: 10px;
+        }
+
+    /* FOOTER */
+    .footer {
+        margin-top: 100px;
+        text-align: center;
+        color: #888;
+        font-size: 14px;
+    }
+</style>

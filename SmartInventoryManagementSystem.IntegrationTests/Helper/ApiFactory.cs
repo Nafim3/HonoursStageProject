@@ -15,20 +15,20 @@ namespace SmartInventoryManagementSystem.ApiTests.Helper
 
             builder.ConfigureServices(services =>
             {
-                // Remove real DB
+              
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
 
                 if (descriptor != null)
                     services.Remove(descriptor);
 
-                // Add InMemory DB
+               
                 services.AddDbContext<AppDbContext>(options =>
                 {
                     options.UseInMemoryDatabase("TestDatabase");
                 });
 
-                // Fake authentication
+                
                 services.AddAuthentication("Test")
                     .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
                         "Test", options => { });

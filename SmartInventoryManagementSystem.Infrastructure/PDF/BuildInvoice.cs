@@ -79,7 +79,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.PDF
                 return sb.ToString();
         }
 
-        // works directly with Sale entity
+   
         public static string BuildFromEntity(Sale sale)
         {
             var sb = new StringBuilder();

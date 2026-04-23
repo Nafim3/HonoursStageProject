@@ -15,7 +15,7 @@ namespace SmartInventoryManagementSystem.Infrastructure.Services
         {
             var totalSold = saleItemsLast30Days.Sum(si => si.Quantity);
 
-            // Handle no sales properly
+            
             if (totalSold <= 0)
             {
                 return new StockPredictionResult
