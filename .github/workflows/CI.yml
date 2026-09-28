@@ -1,4 +1,4 @@
-name: UnitTests
+name: Build, Test, and Deploy API
 
 on:
   push:
@@ -6,14 +6,14 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     env:
       ASPNETCORE_ENVIRONMENT: Testing
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup .NET environment
       uses: actions/setup-dotnet@v3
@@ -24,8 +24,18 @@ jobs:
       run: dotnet restore
       
     - name: Project Build
-      run: dotnet build
+      run: dotnet build --configuration Release
 
     - name: Project UnitTest
       working-directory: SmartInventoryManagementSystem.UnitTests
       run: dotnet test
+
+    - name: Publish API Project
+      run: dotnet publish SmartInventoryManagementSystem.API/SmartInventoryManagementSystem.API.csproj -c Release -o ./publish
+    
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'ims-hsp-grf7h0ejbme8akcj'
+        publish-profile: ${{ secrets.IMS_WEBAPP_PUBLISH_PROFILE }}
+        package: ./publish
